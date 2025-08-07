@@ -1,0 +1,4 @@
+name: CoinsPlugin
+version: '1.0-SNAPSHOT'
+main: de.netzkronehd.coins.CoinsPlugin
+api-version: '1.21'

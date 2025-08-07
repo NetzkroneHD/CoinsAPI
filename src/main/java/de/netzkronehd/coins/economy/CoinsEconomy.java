@@ -1,11 +1,13 @@
 package de.netzkronehd.coins.economy;
 
 import net.milkbowl.vault.economy.AbstractEconomy;
+import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
+import org.bukkit.OfflinePlayer;
 
 import java.util.List;
 
-public class CoinsEconomy extends AbstractEconomy {
+public class CoinsEconomy implements Economy {
 
   @Override
   public boolean isEnabled() {
@@ -48,7 +50,17 @@ public class CoinsEconomy extends AbstractEconomy {
   }
 
   @Override
+  public boolean hasAccount(OfflinePlayer player) {
+    return false;
+  }
+
+  @Override
   public boolean hasAccount(String playerName, String worldName) {
+    return false;
+  }
+
+  @Override
+  public boolean hasAccount(OfflinePlayer player, String worldName) {
     return false;
   }
 
@@ -58,7 +70,17 @@ public class CoinsEconomy extends AbstractEconomy {
   }
 
   @Override
+  public double getBalance(OfflinePlayer player) {
+    return 0;
+  }
+
+  @Override
   public double getBalance(String playerName, String world) {
+    return 0;
+  }
+
+  @Override
+  public double getBalance(OfflinePlayer player, String world) {
     return 0;
   }
 
@@ -68,7 +90,17 @@ public class CoinsEconomy extends AbstractEconomy {
   }
 
   @Override
+  public boolean has(OfflinePlayer player, double amount) {
+    return false;
+  }
+
+  @Override
   public boolean has(String playerName, String worldName, double amount) {
+    return false;
+  }
+
+  @Override
+  public boolean has(OfflinePlayer player, String worldName, double amount) {
     return false;
   }
 
@@ -78,7 +110,17 @@ public class CoinsEconomy extends AbstractEconomy {
   }
 
   @Override
+  public EconomyResponse withdrawPlayer(OfflinePlayer player, double amount) {
+    return null;
+  }
+
+  @Override
   public EconomyResponse withdrawPlayer(String playerName, String worldName, double amount) {
+    return null;
+  }
+
+  @Override
+  public EconomyResponse withdrawPlayer(OfflinePlayer player, String worldName, double amount) {
     return null;
   }
 
@@ -88,12 +130,27 @@ public class CoinsEconomy extends AbstractEconomy {
   }
 
   @Override
+  public EconomyResponse depositPlayer(OfflinePlayer player, double amount) {
+    return null;
+  }
+
+  @Override
   public EconomyResponse depositPlayer(String playerName, String worldName, double amount) {
     return null;
   }
 
   @Override
+  public EconomyResponse depositPlayer(OfflinePlayer player, String worldName, double amount) {
+    return null;
+  }
+
+  @Override
   public EconomyResponse createBank(String name, String player) {
+    return null;
+  }
+
+  @Override
+  public EconomyResponse createBank(String name, OfflinePlayer player) {
     return null;
   }
 
@@ -128,7 +185,17 @@ public class CoinsEconomy extends AbstractEconomy {
   }
 
   @Override
+  public EconomyResponse isBankOwner(String name, OfflinePlayer player) {
+    return null;
+  }
+
+  @Override
   public EconomyResponse isBankMember(String name, String playerName) {
+    return null;
+  }
+
+  @Override
+  public EconomyResponse isBankMember(String name, OfflinePlayer player) {
     return null;
   }
 
@@ -143,7 +210,17 @@ public class CoinsEconomy extends AbstractEconomy {
   }
 
   @Override
+  public boolean createPlayerAccount(OfflinePlayer player) {
+    return false;
+  }
+
+  @Override
   public boolean createPlayerAccount(String playerName, String worldName) {
+    return false;
+  }
+
+  @Override
+  public boolean createPlayerAccount(OfflinePlayer player, String worldName) {
     return false;
   }
 }

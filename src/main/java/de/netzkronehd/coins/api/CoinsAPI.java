@@ -1,7 +1,7 @@
 package de.netzkronehd.coins.api;
 
 import com.google.common.util.concurrent.AtomicDouble;
-import de.netzkronehd.coins.CoinsPlayer;
+import de.netzkronehd.coins.source.PlayerCoinSource;
 import org.bukkit.entity.Player;
 
 import java.util.Optional;
@@ -9,22 +9,25 @@ import java.util.UUID;
 
 public interface CoinsAPI {
 
-  double getCoins(UUID uuid);
-  double setCoins(UUID uuid, double amount);
-  double addCoins(UUID uuid, double amount);
-  double removeCoins(UUID uuid, double amount);
+    double getCoins(UUID uuid);
 
-  AtomicDouble getCoinsHolder(Player player);
+    double setCoins(UUID uuid, double amount);
 
-  Optional<CoinsPlayer> getPlayer(Player player);
+    double addCoins(UUID uuid, double amount);
 
-  default double getCoins(Player player) {
-    return getPlayer(player).map(CoinsPlayer::getCoins).orElse(0D);
-  }
+    double removeCoins(UUID uuid, double amount);
 
-  default double addCoins(Player player, double amount) {
-    return addCoins(player.getUniqueId(), amount);
-  }
+    AtomicDouble getCoinsHolder(Player player);
+
+    Optional<PlayerCoinSource> getPlayer(Player player);
+
+    default double getCoins(Player player) {
+        return getPlayer(player).map(PlayerCoinSource::getCoins).orElse(0D);
+    }
+
+    default double addCoins(Player player, double amount) {
+        return addCoins(player.getUniqueId(), amount);
+    }
 
 
 }

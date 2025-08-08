@@ -1,7 +1,6 @@
 package de.netzkronehd.coins.database.impl;
 
 
-
 import de.netzkronehd.coins.database.Database;
 import de.netzkronehd.coins.dependency.Dependency;
 
@@ -18,7 +17,7 @@ public class MySQLDriver extends Database {
 
     @Override
     public Connection createConnection(String host, int port, String database, String user, String password) throws SQLException, NoSuchMethodException, InvocationTargetException, IllegalAccessException, InstantiationException {
-        if(driverClass == null) {
+        if (driverClass == null) {
             throw new IllegalStateException("ClassLoader is not set.");
         }
         final Object driverInstance = driverClass.getConstructor().newInstance();

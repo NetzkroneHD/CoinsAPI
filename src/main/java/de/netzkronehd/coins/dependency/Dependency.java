@@ -50,17 +50,17 @@ public enum Dependency {
         this.checksum = Base64.getDecoder().decode(checksum);
     }
 
+    private static String rewriteEscaping(String s) {
+        return s.replace("{}", ".");
+    }
+
     public String getFileName() {
         final String name = name().toLowerCase().replace('_', '-');
-        return name+"-"+this.version+".jar";
+        return name + "-" + this.version + ".jar";
     }
 
     public boolean checksumMatches(byte[] hash) {
         return Arrays.equals(this.checksum, hash);
-    }
-
-    private static String rewriteEscaping(String s) {
-        return s.replace("{}", ".");
     }
 
 }

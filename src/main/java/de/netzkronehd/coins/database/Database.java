@@ -1,6 +1,7 @@
 package de.netzkronehd.coins.database;
 
 import de.netzkronehd.coins.config.DatabaseConfig;
+import de.netzkronehd.coins.database.model.PlayerEntry;
 import de.netzkronehd.coins.database.model.UuidAndName;
 import de.netzkronehd.coins.dependency.Dependency;
 import de.netzkronehd.coins.dependency.DependencyManager;
@@ -11,10 +12,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Timestamp;
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.UUID;
 
 public abstract class Database {
@@ -101,6 +101,28 @@ public abstract class Database {
         final ResultSet rs = ps.executeQuery();
         if (!rs.next()) return Optional.empty();
         return Optional.of(UuidAndName.of(UUID.fromString(rs.getString("player_uniqueId")), rs.getString("player_name")));
+    }
+
+    public Optional<PlayerEntry> getPlayerEntry(UUID uuid) throws SQLException {
+        final PreparedStatement ps = connection.prepareStatement("SELECT player_uniqueId, player_name, coins FROM coinsapi_players WHERE player_uniqueId = ?");
+        ps.setString(1, uuid.toString());
+        final ResultSet rs = ps.executeQuery();
+        if (!rs.next()) return Optional.empty();
+        return Optional.of(PlayerEntry.of(UUID.fromString(rs.getString("player_uniqueId")), rs.getString("player_name"), rs.getDouble("coins")));
+    }
+
+    public List<PlayerEntry> getAllPlayers() throws SQLException {
+        final PreparedStatement ps = connection.prepareStatement("SELECT player_uniqueId, player_name, coins FROM coinsapi_players");
+        final ResultSet rs = ps.executeQuery();
+
+        rs.last();
+        final List<PlayerEntry> players = new ArrayList<>(rs.getRow());
+        rs.beforeFirst();
+
+        while (rs.next()) {
+            players.add(PlayerEntry.of(UUID.fromString(rs.getString("player_uniqueId")), rs.getString("player_name"), rs.getDouble("coins")));
+        }
+        return players;
     }
 
     public boolean isConnected() throws SQLException {

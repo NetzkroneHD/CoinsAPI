@@ -2,13 +2,15 @@ package de.netzkronehd.coins.source;
 
 import com.google.common.util.concurrent.AtomicDouble;
 
+import java.sql.SQLException;
 import java.util.UUID;
+import java.util.function.Consumer;
 
 public interface CoinsSource {
 
-    void save();
+    void save() throws SQLException;
 
-    void saveAsync();
+    void saveAsync(Consumer<CoinsSource> afterSave, Consumer<SQLException> onError);
 
     void setCoins(double amount);
 

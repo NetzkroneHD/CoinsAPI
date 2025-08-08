@@ -9,6 +9,7 @@ import de.netzkronehd.coins.dependency.exception.DependencyNotDownloadedExceptio
 import de.netzkronehd.coins.dependency.impl.DependencyManagerImpl;
 import de.netzkronehd.coins.source.PlayerCoinsSource;
 import lombok.Getter;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.IOException;
@@ -68,4 +69,18 @@ public final class CoinsPlugin extends JavaPlugin {
         return Optional.ofNullable(playerCache.get(uuid));
     }
 
+    public Optional<PlayerCoinsSource> getPlayer(Player player) {
+        if (player == null) {
+            return Optional.empty();
+        }
+        return getPlayer(player.getUniqueId());
+    }
+
+    public Optional<PlayerCoinsSource> getPlayer(String name) {
+        return getPlayer(getServer().getPlayer(name));
+    }
+
+    public void runAsync(Runnable run) {
+        getServer().getScheduler().runTaskAsynchronously(this, run);
+    }
 }

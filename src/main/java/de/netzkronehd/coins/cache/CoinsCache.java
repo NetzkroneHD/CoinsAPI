@@ -4,6 +4,7 @@ import de.netzkronehd.coins.CoinsPlugin;
 import de.netzkronehd.coins.database.model.PlayerEntry;
 import de.netzkronehd.coins.source.CacheCoinsSource;
 import de.netzkronehd.coins.source.CoinsSource;
+import de.netzkronehd.coins.source.PlayerCoinsSource;
 
 import java.util.*;
 
@@ -21,28 +22,42 @@ public class CoinsCache {
         this.uuidCache = new HashMap<>();
     }
 
-    public CoinsCache(List<PlayerEntry> entries, CoinsPlugin plugin) {
+    public CoinsCache(CoinsPlugin plugin, List<PlayerEntry> entries) {
         this.plugin = plugin;
         this.nameCache = new HashMap<>();
         this.uuidCache = new HashMap<>();
+        putAllEntries(entries);
+    }
+
+    public void putAllEntries(List<PlayerEntry> entries) {
         entries.forEach(entry -> {
             final CacheCoinsSource source = new CacheCoinsSource(
-                plugin,
-                entry.uuid(),
-                entry.name(),
-                entry.coins()
+                    plugin,
+                    entry.coins(),
+                    entry.uuid(),
+                    entry.name()
             );
-            add(source);
+            put(source);
         });
     }
 
-    public void add(List<CoinsSource> sources) {
-        sources.forEach(this::add);
+    public void putAll(List<CoinsSource> sources) {
+        sources.forEach(this::put);
     }
 
-    public void add(CoinsSource source) {
+    public void put(CoinsSource source) {
         nameCache.put(source.getName().toLowerCase(), source);
         uuidCache.put(source.getUniqueId(), source);
+    }
+
+    public void cachePlayer(PlayerCoinsSource player) {
+        final CacheCoinsSource source = new CacheCoinsSource(
+                plugin,
+                player.getCoinsHolder(),
+                player.getUniqueId(),
+                player.getName()
+        );
+        put(source);
     }
 
     public Optional<CoinsSource> get(String name) {
@@ -53,4 +68,8 @@ public class CoinsCache {
         return ofNullable(uuidCache.get(uuid));
     }
 
+    public void clear() {
+        nameCache.clear();
+        uuidCache.clear();
+    }
 }

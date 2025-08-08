@@ -81,6 +81,18 @@ public abstract class Database {
         return ps.executeQuery().next();
     }
 
+    public void updatePlayer(UUID uuid, String playerName, double coins) throws SQLException {
+        final PreparedStatement ps = connection.prepareStatement("""
+                UPDATE coinsapi_players
+                SET player_name = ?, coins = ?
+                WHERE player_uniqueId = ?
+                """);
+        ps.setString(1, playerName);
+        ps.setDouble(2, coins);
+        ps.setString(3, uuid.toString());
+        ps.executeUpdate();
+    }
+
     public void setCoins(UUID uuid, double coins) throws SQLException {
         final PreparedStatement ps = connection.prepareStatement("UPDATE coinsapi_players SET coins = ? WHERE player_uniqueId = ?");
         ps.setDouble(1, coins);

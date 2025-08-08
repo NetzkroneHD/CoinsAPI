@@ -1,32 +1,28 @@
 package de.netzkronehd.coins.source;
 
-import com.google.common.util.concurrent.AtomicDouble;
+import de.netzkronehd.coins.CoinsPlugin;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import org.bukkit.entity.Player;
 
-@RequiredArgsConstructor
+import java.util.UUID;
+
 @Getter
-public class PlayerCoinsSource {
+public class PlayerCoinsSource extends AbstractCoinsSource {
 
     private final Player player;
-    private final AtomicDouble atomicCoins;
 
-    public double addCoins(double amount) {
-        return atomicCoins.addAndGet(amount);
+    public PlayerCoinsSource(CoinsPlugin plugin, double coins, Player player) {
+        super(plugin, coins);
+        this.player = player;
     }
 
-    public double removeCoins(double amount) {
-        return atomicCoins.addAndGet(-amount);
+    @Override
+    public String getName() {
+        return player.getName();
     }
 
-    public double getCoins() {
-        return atomicCoins.get();
+    @Override
+    public UUID getUniqueId() {
+        return player.getUniqueId();
     }
-
-    public void setCoins(double amount) {
-        atomicCoins.set(amount);
-    }
-
-
 }

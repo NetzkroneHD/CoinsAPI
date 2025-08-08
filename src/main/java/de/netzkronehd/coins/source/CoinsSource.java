@@ -4,7 +4,7 @@ import com.google.common.util.concurrent.AtomicDouble;
 
 import java.util.UUID;
 
-public interface CoinSource {
+public interface CoinsSource {
 
     void save();
 

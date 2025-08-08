@@ -7,7 +7,7 @@ import org.bukkit.entity.Player;
 
 @RequiredArgsConstructor
 @Getter
-public class PlayerCoinSource {
+public class PlayerCoinsSource {
 
     private final Player player;
     private final AtomicDouble atomicCoins;

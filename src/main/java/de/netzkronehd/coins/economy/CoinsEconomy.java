@@ -1,10 +1,13 @@
 package de.netzkronehd.coins.economy;
 
+import de.netzkronehd.coins.CoinsPlugin;
 import de.netzkronehd.coins.api.CoinsApi;
 import de.netzkronehd.coins.source.CoinsSource;
 import net.milkbowl.vault.economy.AbstractEconomy;
+import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.plugin.ServicePriority;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -14,9 +17,11 @@ import static net.milkbowl.vault.economy.EconomyResponse.ResponseType.*;
 
 public class CoinsEconomy extends AbstractEconomy {
 
+    private final CoinsPlugin plugin;
     private final CoinsApi coinsApi;
 
-    public CoinsEconomy(CoinsApi coinsApi) {
+    public CoinsEconomy(CoinsPlugin plugin, CoinsApi coinsApi) {
+        this.plugin = plugin;
         this.coinsApi = coinsApi;
     }
 
@@ -27,7 +32,7 @@ public class CoinsEconomy extends AbstractEconomy {
 
     @Override
     public String getName() {
-        return "CoinsEconomy";
+        return coinsApi.getConfig().getEconomyName();
     }
 
     @Override
@@ -174,5 +179,9 @@ public class CoinsEconomy extends AbstractEconomy {
     @Override
     public boolean createPlayerAccount(String playerName, String worldName) {
         throw new UnsupportedOperationException("Creating player accounts with only names is not supported.");
+    }
+
+    public void register() {
+        plugin.getServer().getServicesManager().register(Economy.class, this, plugin, ServicePriority.Normal);
     }
 }

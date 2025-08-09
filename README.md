@@ -3,6 +3,8 @@
 This is a Minecraft plugin that allows you to create and manage coins in your Minecraft server. 
 It provides a simple API for developers to interact with coins, including creating, deleting, and modifying coins.
 
+It implements the default [Vault API](https://github.com/MilkBowl/VaultAPI/) but without a bank account.
+
 ## How to use
 
 1. Download the CoinsAPI plugin from the releases page.
@@ -15,7 +17,7 @@ It provides a simple API for developers to interact with coins, including creati
 To use the CoinsAPI in your plugin, you need to add it as a dependency in your `plugin.yml` file:
 
 ```yaml
-depend: [CoinsAPI]
+depend: [NetzCoinsApi]
 ```
 
 ### Api structure

@@ -11,6 +11,7 @@ import de.netzkronehd.coins.dependency.DependencyManager;
 import de.netzkronehd.coins.dependency.exception.DependencyDownloadException;
 import de.netzkronehd.coins.dependency.exception.DependencyNotDownloadedException;
 import de.netzkronehd.coins.dependency.impl.DependencyManagerImpl;
+import de.netzkronehd.coins.economy.CoinsEconomy;
 import de.netzkronehd.coins.source.PlayerCoinsSource;
 import lombok.Getter;
 import org.bukkit.entity.Player;
@@ -35,6 +36,7 @@ public final class CoinsPlugin extends JavaPlugin {
     private DependencyManager dependencyManager;
     private CacheService cacheService;
     private DatabaseService databaseService;
+    private CoinsEconomy coinsEconomy;
 
     @Override
     public void onLoad() {
@@ -59,6 +61,15 @@ public final class CoinsPlugin extends JavaPlugin {
         loadConfig();
 
         coinsApi = new CoinsApiImpl(this);
+
+        if(getServer().getPluginManager().getPlugin("Vault") != null) {
+            getLogger().info("Vault is installed, registering economy...");
+            coinsEconomy = new CoinsEconomy(this, coinsApi);
+            coinsEconomy.register();
+        } else {
+            getLogger().warning("Vault is not enabled, economy will not be registered.");
+        }
+
     }
 
     @Override
@@ -80,11 +91,12 @@ public final class CoinsPlugin extends JavaPlugin {
         final var decimalFormat = new DecimalFormat(getConfig().getString("decimal-format", "#,##0.00"));
         decimalFormat.setDecimalFormatSymbols(DecimalFormatSymbols.getInstance(Locale.of(getConfig().getString("locale", "de"))));
 
+        final var economyName = getConfig().getString("economy-name", "NetzCoinsEconomy");
         final var currencySymbol = getConfig().getString("currency.symbol", "C");
         final var currencyNameSingular = getConfig().getString("currency.name.singular", "Coin");
         final var currencyNamePlural = getConfig().getString("currency.name.plural", "Coins");
 
-        this.coinsConfig = new CoinsConfig(decimalFormat, currencySymbol, currencyNameSingular, currencyNamePlural);
+        this.coinsConfig = new CoinsConfig(decimalFormat, economyName, currencySymbol, currencyNameSingular, currencyNamePlural);
         getLogger().info("Coins configuration loaded successfully.");
     }
 

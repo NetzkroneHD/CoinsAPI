@@ -6,6 +6,7 @@ import de.netzkronehd.coins.cache.CacheService;
 import de.netzkronehd.coins.cache.CoinsCache;
 import de.netzkronehd.coins.config.CoinsConfig;
 import de.netzkronehd.coins.database.DatabaseService;
+import de.netzkronehd.coins.economy.CoinsEconomy;
 import de.netzkronehd.coins.source.CacheCoinsSource;
 import de.netzkronehd.coins.source.CoinsSource;
 import de.netzkronehd.coins.source.PlayerCoinsSource;
@@ -67,5 +68,10 @@ public class CoinsApiImpl implements CoinsApi {
     @Override
     public CacheService getCacheService() {
         return plugin.getCacheService();
+    }
+
+    @Override
+    public CoinsEconomy getCoinsEconomy() {
+        return plugin.getCoinsEconomy();
     }
 }

@@ -4,6 +4,7 @@ import de.netzkronehd.coins.cache.CacheService;
 import de.netzkronehd.coins.cache.CoinsCache;
 import de.netzkronehd.coins.config.CoinsConfig;
 import de.netzkronehd.coins.database.DatabaseService;
+import de.netzkronehd.coins.economy.CoinsEconomy;
 import de.netzkronehd.coins.source.CoinsSource;
 import de.netzkronehd.coins.source.PlayerCoinsSource;
 import org.bukkit.entity.Player;
@@ -59,5 +60,6 @@ public interface CoinsApi {
 
     DatabaseService getDatabaseService();
     CacheService getCacheService();
+    CoinsEconomy getCoinsEconomy();
 
 }

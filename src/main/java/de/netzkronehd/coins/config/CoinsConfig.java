@@ -12,6 +12,7 @@ import java.text.DecimalFormat;
 public class CoinsConfig {
 
     private DecimalFormat decimalFormat;
+    private String economyName;
     private String currencySymbol;
     private String currencyNamePlural;
     private String currencyNameSingular;

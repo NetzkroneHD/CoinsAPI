@@ -1,5 +1,6 @@
 decimal-format: "#,##0.00"
 locale: de
+economy-name: "NetzCoinsEconomy"
 currency:
   symbol: "C"
   name:

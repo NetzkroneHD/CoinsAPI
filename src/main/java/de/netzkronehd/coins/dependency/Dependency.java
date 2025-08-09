@@ -12,22 +12,22 @@ public enum Dependency {
     MYSQL(
             "com{}mysql",
             "mysql-connector-j",
-            "9.1.0",
-            "h3bi68RgcsmkfqWdmCmMQnO9nxansmtd+kdEU1qibGI=",
+            "9.4.0",
+            "Se2TyLK+qcsJKbhaiiiDexkdD46saRn9zvFuNuLNU7M=",
             "com.mysql.cj.jdbc.Driver"),
     POSTGRESQL(
             "org{}postgresql",
             "postgresql",
-            "42.7.4",
-            "GIl2ch6tjoYn622DidUA3MwMm+vYhSaKMEcYAnSmAx4=",
+            "42.7.7",
+            "FXlj1grmbWB+CUZujAzfgIfpyyDQFZiZ/8qWvKJShGA=",
             "org.postgresql.Driver"),
 
     // Local databases
     SQLITE(
             "org{}xerial",
             "sqlite-jdbc",
-            "3.47.1.0",
-            "QWTZU0euq0K3VMq7eUW5PlTyndsu3tln2+l5tARctoU=",
+            "3.50.3.0",
+            "o/U6KqFa6UJannk7vpyOUoj+vrS2XvXBpOgNTCBFzwg=",
             "org.sqlite.JDBC");
 
     private static final String MAVEN_FORMAT = "%s/%s/%s/%s-%s.jar";

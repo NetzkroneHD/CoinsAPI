@@ -1,7 +1,9 @@
 package de.netzkronehd.coins.api;
 
+import de.netzkronehd.coins.cache.CacheService;
 import de.netzkronehd.coins.cache.CoinsCache;
 import de.netzkronehd.coins.config.CoinsConfig;
+import de.netzkronehd.coins.database.DatabaseService;
 import de.netzkronehd.coins.source.CoinsSource;
 import de.netzkronehd.coins.source.PlayerCoinsSource;
 import org.bukkit.entity.Player;
@@ -12,8 +14,7 @@ import java.util.UUID;
 
 public interface CoinsApi {
 
-    CoinsCache getCache();
-    CoinsConfig getConfig();
+    void loadCache() throws SQLException;
 
     /**
      * Creates a new cache source for the given UUID, name, and coins amount.
@@ -52,5 +53,11 @@ public interface CoinsApi {
         return getPlayer(player.getUniqueId());
     }
 
+    CoinsCache getCache();
+
+    CoinsConfig getConfig();
+
+    DatabaseService getDatabaseService();
+    CacheService getCacheService();
 
 }

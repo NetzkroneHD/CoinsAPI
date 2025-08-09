@@ -92,6 +92,21 @@ public abstract class Database {
         return ps.executeQuery().next();
     }
 
+    public void updatePlayers(List<PlayerEntry> entries) throws SQLException {
+        final PreparedStatement ps = connection.prepareStatement("""
+                UPDATE coinsapi_players
+                SET player_name = ?, coins = ?
+                WHERE player_uniqueId = ?
+                """);
+        for (PlayerEntry entry : entries) {
+            ps.setString(1, entry.name());
+            ps.setDouble(2, entry.coins());
+            ps.setString(3, entry.uuid().toString());
+            ps.addBatch();
+        }
+        ps.executeBatch();
+    }
+
     public void updatePlayer(UUID uuid, String playerName, double coins) throws SQLException {
         final PreparedStatement ps = connection.prepareStatement("""
                 UPDATE coinsapi_players

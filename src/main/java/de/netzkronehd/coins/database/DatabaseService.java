@@ -45,7 +45,7 @@ public class DatabaseService {
         plugin.getLogger().info("Loading database driver class: " + database.getClassName());
         database.loadDriverClass(plugin.getDependencyManager());
 
-        plugin.getLogger().info(String.format("Connecting to database %s@%s:%s/%s...", config.getUsername(), config.getHost(), config.getPort(), config.getDatabase()));
+        plugin.getLogger().info(String.format("Connecting to database %s@%s:%s/%s...", config.getUsername(), config.getHost(), (Object) config.getPort(), config.getDatabase()));
         try {
             database.connect(config);
             plugin.getLogger().info("Database connection established successfully. Creating tables...");

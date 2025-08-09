@@ -5,6 +5,7 @@ import de.netzkronehd.coins.api.impl.CoinsApiImpl;
 import de.netzkronehd.coins.cache.CacheService;
 import de.netzkronehd.coins.config.CoinsConfig;
 import de.netzkronehd.coins.database.DatabaseService;
+import de.netzkronehd.coins.database.model.PlayerEntry;
 import de.netzkronehd.coins.dependency.Dependency;
 import de.netzkronehd.coins.dependency.DependencyManager;
 import de.netzkronehd.coins.dependency.exception.DependencyDownloadException;
@@ -16,6 +17,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.*;
@@ -61,7 +63,17 @@ public final class CoinsPlugin extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        // Plugin shutdown logic
+        getLogger().info("Disabling CoinsPlugin...");
+
+        final var players = playerCache.values().stream().map(player -> new PlayerEntry(player.getUniqueId(), player.getName(), player.getCoins())).toList();
+        try {
+            databaseService.getDatabase().updatePlayers(players);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        playerCache.clear();
+        getLogger().info("CoinsPlugin disabled successfully.");
     }
 
     private void loadConfig() {

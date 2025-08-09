@@ -1,21 +1,33 @@
 package de.netzkronehd.coins.economy;
 
-import net.milkbowl.vault.economy.Economy;
+import de.netzkronehd.coins.api.CoinsApi;
+import de.netzkronehd.coins.source.CoinsSource;
+import net.milkbowl.vault.economy.AbstractEconomy;
 import net.milkbowl.vault.economy.EconomyResponse;
 import org.bukkit.OfflinePlayer;
 
+import java.sql.SQLException;
 import java.util.List;
 
-public class CoinsEconomy implements Economy {
+import static java.util.Collections.emptyList;
+import static net.milkbowl.vault.economy.EconomyResponse.ResponseType.*;
+
+public class CoinsEconomy extends AbstractEconomy {
+
+    private final CoinsApi coinsApi;
+
+    public CoinsEconomy(CoinsApi coinsApi) {
+        this.coinsApi = coinsApi;
+    }
 
     @Override
     public boolean isEnabled() {
-        return false;
+        return true;
     }
 
     @Override
     public String getName() {
-        return "";
+        return "CoinsEconomy";
     }
 
     @Override
@@ -25,201 +37,142 @@ public class CoinsEconomy implements Economy {
 
     @Override
     public int fractionalDigits() {
-        return 0;
+        // IEEE 754 standard for double precision floating point numbers
+        return 15;
     }
 
     @Override
     public String format(double amount) {
-        return "";
+        return coinsApi.getConfig().getDecimalFormat().format(amount);
     }
 
     @Override
     public String currencyNamePlural() {
-        return "Coins";
+        return coinsApi.getConfig().getCurrencyNamePlural();
     }
 
     @Override
     public String currencyNameSingular() {
-        return "Coin";
+        return coinsApi.getConfig().getCurrencyNameSingular();
     }
 
     @Override
     public boolean hasAccount(String playerName) {
-        return false;
-    }
-
-    @Override
-    public boolean hasAccount(OfflinePlayer player) {
-        return false;
+        return coinsApi.getSource(playerName).isPresent();
     }
 
     @Override
     public boolean hasAccount(String playerName, String worldName) {
-        return false;
-    }
-
-    @Override
-    public boolean hasAccount(OfflinePlayer player, String worldName) {
-        return false;
+        return hasAccount(playerName);
     }
 
     @Override
     public double getBalance(String playerName) {
-        return 0;
-    }
-
-    @Override
-    public double getBalance(OfflinePlayer player) {
-        return 0;
+        return coinsApi.getSource(playerName).map(CoinsSource::getCoins).orElse(0D);
     }
 
     @Override
     public double getBalance(String playerName, String world) {
-        return 0;
-    }
-
-    @Override
-    public double getBalance(OfflinePlayer player, String world) {
-        return 0;
+        return getBalance(playerName);
     }
 
     @Override
     public boolean has(String playerName, double amount) {
-        return false;
-    }
-
-    @Override
-    public boolean has(OfflinePlayer player, double amount) {
-        return false;
+        return coinsApi.getSource(playerName)
+                .map(source -> source.getCoins() >= amount)
+                .orElse(false);
     }
 
     @Override
     public boolean has(String playerName, String worldName, double amount) {
-        return false;
-    }
-
-    @Override
-    public boolean has(OfflinePlayer player, String worldName, double amount) {
-        return false;
+        return has(playerName, amount);
     }
 
     @Override
     public EconomyResponse withdrawPlayer(String playerName, double amount) {
-        return null;
-    }
-
-    @Override
-    public EconomyResponse withdrawPlayer(OfflinePlayer player, double amount) {
-        return null;
+        return coinsApi.getSource(playerName)
+                .map(coinsSource -> new EconomyResponse(amount, coinsSource.removeCoins(amount), SUCCESS, ""))
+                .orElseGet(() -> new EconomyResponse(0, 0, FAILURE, "Could not find any source for name "+playerName));
     }
 
     @Override
     public EconomyResponse withdrawPlayer(String playerName, String worldName, double amount) {
-        return null;
-    }
-
-    @Override
-    public EconomyResponse withdrawPlayer(OfflinePlayer player, String worldName, double amount) {
-        return null;
+        return withdrawPlayer(playerName, amount);
     }
 
     @Override
     public EconomyResponse depositPlayer(String playerName, double amount) {
-        return null;
-    }
-
-    @Override
-    public EconomyResponse depositPlayer(OfflinePlayer player, double amount) {
-        return null;
+        return coinsApi.getSource(playerName)
+                .map(coinsSource -> new EconomyResponse(amount, coinsSource.addCoins(amount), SUCCESS, ""))
+                .orElseGet(() -> new EconomyResponse(0, 0, FAILURE, "Could not find any source for name "+playerName));
     }
 
     @Override
     public EconomyResponse depositPlayer(String playerName, String worldName, double amount) {
-        return null;
-    }
-
-    @Override
-    public EconomyResponse depositPlayer(OfflinePlayer player, String worldName, double amount) {
-        return null;
+        return depositPlayer(playerName, amount);
     }
 
     @Override
     public EconomyResponse createBank(String name, String player) {
-        return null;
-    }
-
-    @Override
-    public EconomyResponse createBank(String name, OfflinePlayer player) {
-        return null;
+        return new EconomyResponse(0, 0, NOT_IMPLEMENTED, "Banking is not supported.");
     }
 
     @Override
     public EconomyResponse deleteBank(String name) {
-        return null;
+        return new EconomyResponse(0, 0, NOT_IMPLEMENTED, "Banking is not supported.");
     }
 
     @Override
     public EconomyResponse bankBalance(String name) {
-        return null;
+        return new EconomyResponse(0, 0, NOT_IMPLEMENTED, "Banking is not supported.");
     }
 
     @Override
     public EconomyResponse bankHas(String name, double amount) {
-        return null;
+        return new EconomyResponse(0, 0, NOT_IMPLEMENTED, "Banking is not supported.");
     }
 
     @Override
     public EconomyResponse bankWithdraw(String name, double amount) {
-        return null;
+        return new EconomyResponse(0, 0, NOT_IMPLEMENTED, "Banking is not supported.");
     }
 
     @Override
     public EconomyResponse bankDeposit(String name, double amount) {
-        return null;
+        return new EconomyResponse(0, 0, NOT_IMPLEMENTED, "Banking is not supported.");
     }
 
     @Override
     public EconomyResponse isBankOwner(String name, String playerName) {
-        return null;
-    }
-
-    @Override
-    public EconomyResponse isBankOwner(String name, OfflinePlayer player) {
-        return null;
+        return new EconomyResponse(0, 0, NOT_IMPLEMENTED, "Banking is not supported.");
     }
 
     @Override
     public EconomyResponse isBankMember(String name, String playerName) {
-        return null;
-    }
-
-    @Override
-    public EconomyResponse isBankMember(String name, OfflinePlayer player) {
-        return null;
+        return new EconomyResponse(0, 0, NOT_IMPLEMENTED, "Banking is not supported.");
     }
 
     @Override
     public List<String> getBanks() {
-        return List.of();
+        return emptyList();
     }
 
     @Override
     public boolean createPlayerAccount(String playerName) {
-        return false;
+        throw new UnsupportedOperationException("Creating player accounts with only names is not supported.");
     }
 
     @Override
     public boolean createPlayerAccount(OfflinePlayer player) {
-        return false;
+        try {
+            return coinsApi.createCacheSource(player.getUniqueId(), player.getName(), 0).isPresent();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
     public boolean createPlayerAccount(String playerName, String worldName) {
-        return false;
-    }
-
-    @Override
-    public boolean createPlayerAccount(OfflinePlayer player, String worldName) {
-        return false;
+        throw new UnsupportedOperationException("Creating player accounts with only names is not supported.");
     }
 }

@@ -56,10 +56,21 @@ public abstract class Database {
     public int insertPlayer(UUID uuid, String playerName) throws SQLException {
         final PreparedStatement ps = connection.prepareStatement("""
                 INSERT INTO coinsapi_players (player_uniqueId, player_name)
+                VALUES (?, ?)
+                """);
+        ps.setString(1, uuid.toString());
+        ps.setString(2, playerName);
+        return ps.executeUpdate();
+    }
+
+    public int insertPlayer(UUID uuid, String playerName, double coins) throws SQLException {
+        final PreparedStatement ps = connection.prepareStatement("""
+                INSERT INTO coinsapi_players (player_uniqueId, player_name, coins)
                 VALUES (?, ?, ?)
                 """);
         ps.setString(1, uuid.toString());
         ps.setString(2, playerName);
+        ps.setDouble(3, coins);
         return ps.executeUpdate();
     }
 

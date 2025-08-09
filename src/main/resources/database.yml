@@ -1,0 +1,9 @@
+# Can be MySQL, PostgreSQL or SQLite
+# Default is SQLite
+# If using SQLite, the database file will be created in the current directory
+driver: sqlite
+host: localhost
+port: 3306
+database: coins
+username: username
+password: password

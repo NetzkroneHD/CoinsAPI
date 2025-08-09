@@ -3,8 +3,12 @@ package de.netzkronehd.coins.api.impl;
 import de.netzkronehd.coins.CoinsPlugin;
 import de.netzkronehd.coins.api.CoinsApi;
 import de.netzkronehd.coins.cache.CoinsCache;
+import de.netzkronehd.coins.config.CoinsConfig;
+import de.netzkronehd.coins.source.CacheCoinsSource;
+import de.netzkronehd.coins.source.CoinsSource;
 import de.netzkronehd.coins.source.PlayerCoinsSource;
 
+import java.sql.SQLException;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -19,6 +23,23 @@ public class CoinsApiImpl implements CoinsApi {
     @Override
     public CoinsCache getCache() {
         return plugin.getCacheService().getCoinsCache();
+    }
+
+    @Override
+    public CoinsConfig getConfig() {
+        return plugin.getCoinsConfig();
+    }
+
+    @Override
+    public Optional<CoinsSource> createCacheSource(UUID uuid, String name, double coins) throws SQLException {
+        final var player = getCache().get(uuid);
+        if (player.isPresent()) {
+            return Optional.empty();
+        }
+        plugin.getDatabaseService().getDatabase().insertPlayer(uuid, name, coins);
+        final var source = new CacheCoinsSource(plugin, coins, uuid, name);
+        getCache().put(source);
+        return Optional.of(source);
     }
 
     @Override

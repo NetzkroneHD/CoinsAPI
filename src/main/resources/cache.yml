@@ -1,0 +1,3 @@
+# Reloads the coins cache every x seconds.
+# Default is 15 minutes (900 seconds).
+reload-cache-time-in-seconds: 900

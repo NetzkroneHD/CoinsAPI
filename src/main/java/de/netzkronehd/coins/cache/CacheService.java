@@ -1,6 +1,7 @@
 package de.netzkronehd.coins.cache;
 
 import de.netzkronehd.coins.CoinsPlugin;
+import de.netzkronehd.coins.api.event.CachLoadedEvent;
 import lombok.Getter;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -40,6 +41,7 @@ public class CacheService {
         coinsCache.clear();
         coinsCache.putAllEntries(plugin.getDatabaseService().getDatabase().getAllPlayers());
         plugin.getPlayerCache().values().forEach(coinsCache::put);
+        plugin.getServer().getPluginManager().callEvent(new CachLoadedEvent(coinsCache));
     }
 
     public void startCacheReloadTask() {

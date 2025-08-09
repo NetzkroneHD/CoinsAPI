@@ -1,6 +1,7 @@
 package de.netzkronehd.coins.source;
 
 import com.google.common.util.concurrent.AtomicDouble;
+import org.jetbrains.annotations.ApiStatus;
 
 import java.sql.SQLException;
 import java.util.UUID;
@@ -16,7 +17,7 @@ public interface CoinsSource {
 
     void saveAsync(Consumer<CoinsSource> afterSave, Consumer<SQLException> onError);
 
-    void setCoins(double amount);
+    double setCoins(double amount);
 
     double addCoins(double amount);
 
@@ -24,6 +25,12 @@ public interface CoinsSource {
 
     double getCoins();
 
+    /**
+     * @deprecated Use {@link #getCoins()} instead.
+     * Editing this method directly is not recommended and may lead to unexpected behavior.
+     */
+    @Deprecated
+    @ApiStatus.Internal
     AtomicDouble getCoinsHolder();
 
     String getName();

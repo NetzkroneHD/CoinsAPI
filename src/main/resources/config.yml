@@ -1,0 +1,7 @@
+decimal-format: "#,##0.00"
+locale: de
+currency:
+  symbol: "C"
+  name:
+    singular: "Coin"
+    plural: "Coins"

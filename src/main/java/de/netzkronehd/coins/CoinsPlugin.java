@@ -1,6 +1,9 @@
 package de.netzkronehd.coins;
 
+import de.netzkronehd.coins.api.CoinsApi;
+import de.netzkronehd.coins.api.impl.CoinsApiImpl;
 import de.netzkronehd.coins.cache.CacheService;
+import de.netzkronehd.coins.config.CoinsConfig;
 import de.netzkronehd.coins.database.DatabaseService;
 import de.netzkronehd.coins.dependency.Dependency;
 import de.netzkronehd.coins.dependency.DependencyManager;
@@ -13,22 +16,27 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.util.*;
 
 @Getter
 public final class CoinsPlugin extends JavaPlugin {
 
+    @Getter
+    public static CoinsPlugin instance;
+
     private final Map<UUID, PlayerCoinsSource> playerCache = new HashMap<>();
 
+    private CoinsApi coinsApi;
+    private CoinsConfig coinsConfig;
     private DependencyManager dependencyManager;
     private CacheService cacheService;
     private DatabaseService databaseService;
 
     @Override
     public void onLoad() {
+        instance = this;
         try {
             loadDependencies();
         } catch (Exception e) {
@@ -45,11 +53,27 @@ public final class CoinsPlugin extends JavaPlugin {
 
         databaseService.readConfig();
         cacheService.startCacheReloadTask();
+        saveDefaultConfig();
+        loadConfig();
+
+        coinsApi = new CoinsApiImpl(this);
     }
 
     @Override
     public void onDisable() {
         // Plugin shutdown logic
+    }
+
+    private void loadConfig() {
+        final var decimalFormat = new DecimalFormat(getConfig().getString("decimal-format", "#,##0.00"));
+        decimalFormat.setDecimalFormatSymbols(DecimalFormatSymbols.getInstance(Locale.of(getConfig().getString("locale", "de"))));
+
+        final var currencySymbol = getConfig().getString("currency.symbol", "C");
+        final var currencyNameSingular = getConfig().getString("currency.name.singular", "Coin");
+        final var currencyNamePlural = getConfig().getString("currency.name.plural", "Coins");
+
+        this.coinsConfig = new CoinsConfig(decimalFormat, currencySymbol, currencyNameSingular, currencyNamePlural);
+        getLogger().info("Coins configuration loaded successfully.");
     }
 
     private void loadDependencies() throws DependencyDownloadException, IOException, InterruptedException, ClassNotFoundException, DependencyNotDownloadedException {

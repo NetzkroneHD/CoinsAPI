@@ -2,6 +2,7 @@ package de.netzkronehd.coins.source;
 
 import com.google.common.util.concurrent.AtomicDouble;
 import de.netzkronehd.coins.CoinsPlugin;
+import de.netzkronehd.coins.api.event.CoinsChangeEvent;
 
 import java.sql.SQLException;
 import java.util.function.Consumer;
@@ -20,20 +21,31 @@ public abstract class AbstractCoinsSource implements CoinsSource {
         this(plugin, new AtomicDouble(coins));
     }
 
+    @Override
     public double addCoins(double amount) {
-        return coinsHolder.addAndGet(amount);
+        return setCoins(getCoins() + amount);
     }
 
+    @Override
     public double removeCoins(double amount) {
-        return coinsHolder.addAndGet(-amount);
+        return setCoins(getCoins() - amount);
     }
 
+    @Override
     public double getCoins() {
         return coinsHolder.get();
     }
 
-    public void setCoins(double amount) {
-        coinsHolder.set(amount);
+    @Override
+    public double setCoins(double amount) {
+        final double from = getCoins();
+        final var event = new CoinsChangeEvent(this, from, getCoins());
+        plugin.getServer().getPluginManager().callEvent(event);
+        if(event.isCancelled()) {
+            return from;
+        }
+        coinsHolder.set(event.getTo());
+        return getCoins();
     }
 
     @Override

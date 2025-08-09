@@ -10,6 +10,10 @@ public interface CoinsSource {
 
     void save() throws SQLException;
 
+    default void saveAsync() {
+        saveAsync(null, null);
+    }
+
     void saveAsync(Consumer<CoinsSource> afterSave, Consumer<SQLException> onError);
 
     void setCoins(double amount);

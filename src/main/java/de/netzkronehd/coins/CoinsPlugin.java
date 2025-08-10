@@ -12,6 +12,7 @@ import de.netzkronehd.coins.dependency.exception.DependencyDownloadException;
 import de.netzkronehd.coins.dependency.exception.DependencyNotDownloadedException;
 import de.netzkronehd.coins.dependency.impl.DependencyManagerImpl;
 import de.netzkronehd.coins.economy.CoinsEconomy;
+import de.netzkronehd.coins.listener.CoinsPlayerJoinListener;
 import de.netzkronehd.coins.source.PlayerCoinsSource;
 import lombok.Getter;
 import org.bukkit.entity.Player;
@@ -69,6 +70,8 @@ public final class CoinsPlugin extends JavaPlugin {
         } else {
             getLogger().warning("Vault is not enabled, economy will not be registered.");
         }
+
+        getServer().getPluginManager().registerEvents(new CoinsPlayerJoinListener(this), this);
 
     }
 

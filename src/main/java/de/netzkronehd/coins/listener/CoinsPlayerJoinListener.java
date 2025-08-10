@@ -11,11 +11,11 @@ import org.bukkit.event.player.PlayerQuitEvent;
 
 import java.sql.SQLException;
 
-public class PlayerJoinListener implements Listener {
+public class CoinsPlayerJoinListener implements Listener {
 
     private final CoinsPlugin plugin;
 
-    public PlayerJoinListener(CoinsPlugin plugin) {
+    public CoinsPlayerJoinListener(CoinsPlugin plugin) {
         this.plugin = plugin;
     }
 
@@ -30,9 +30,8 @@ public class PlayerJoinListener implements Listener {
         plugin.runAsync(() -> {
             try {
                 plugin.getDatabaseService().getDatabase().insertOrUpdatePlayer(player.getUniqueId(), player.getName());
-                plugin.getDatabaseService().getDatabase().getPlayerEntry(player.getUniqueId()).ifPresent(entry -> {
-                    player.getCoinsHolder().set(entry.coins());
-                });
+                plugin.getDatabaseService().getDatabase().getPlayerEntry(player.getUniqueId())
+                        .ifPresent(entry -> player.getCoinsHolder().set(entry.coins()));
                 plugin.getServer().getPluginManager().callEvent(new CoinsInitializedEvent(player));
             } catch (SQLException e) {
                 throw new RuntimeException(e);
@@ -45,9 +44,7 @@ public class PlayerJoinListener implements Listener {
         plugin.getPlayer(event.getPlayer()).ifPresentOrElse(player -> {
             plugin.getCacheService().getCoinsCache().cachePlayer(player);
             player.saveAsync();
-        }, () -> {
-            plugin.getLogger().severe("Tried to cache player " + event.getPlayer().getName() + " but they were not found in the player cache.");
-        });
+        }, () -> plugin.getLogger().severe("Tried to cache player " + event.getPlayer().getName() + " but they were not found in the player cache."));
     }
 
 }

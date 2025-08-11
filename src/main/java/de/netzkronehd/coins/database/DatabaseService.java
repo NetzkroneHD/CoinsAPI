@@ -41,7 +41,8 @@ public class DatabaseService {
     }
 
     public void loadDatabase(DatabaseConfig config) {
-        this.database = config.createDatabase(plugin.getDataFolder().toPath().resolve(config.getDatabase()));
+        final var databaseFile = plugin.getDataFolder().toPath().resolve(config.getDatabase() + ".db");
+        this.database = config.createDatabase(databaseFile);
         plugin.getLogger().info("Loading database driver class: " + database.getClassName());
         database.loadDriverClass(plugin.getDependencyManager());
 

@@ -96,7 +96,11 @@ public class CoinsEconomy extends AbstractEconomy {
     @Override
     public EconomyResponse withdrawPlayer(String playerName, double amount) {
         return coinsApi.getSource(playerName)
-                .map(coinsSource -> new EconomyResponse(amount, coinsSource.removeCoins(amount), SUCCESS, ""))
+                .map(coinsSource -> {
+                    final var newBalance = coinsSource.removeCoins(amount);
+                    coinsSource.saveAsync();
+                    return new EconomyResponse(amount, newBalance, SUCCESS, "");
+                })
                 .orElseGet(() -> new EconomyResponse(0, 0, FAILURE, "Could not find any source for name "+playerName));
     }
 
@@ -108,7 +112,11 @@ public class CoinsEconomy extends AbstractEconomy {
     @Override
     public EconomyResponse depositPlayer(String playerName, double amount) {
         return coinsApi.getSource(playerName)
-                .map(coinsSource -> new EconomyResponse(amount, coinsSource.addCoins(amount), SUCCESS, ""))
+                .map(coinsSource -> {
+                    final var newBalance = coinsSource.addCoins(amount);
+                    coinsSource.saveAsync();
+                    return new EconomyResponse(amount, newBalance, SUCCESS, "");
+                })
                 .orElseGet(() -> new EconomyResponse(0, 0, FAILURE, "Could not find any source for name "+playerName));
     }
 

@@ -3,6 +3,8 @@ package de.netzkronehd.coins.source;
 import com.google.common.util.concurrent.AtomicDouble;
 import de.netzkronehd.coins.CoinsPlugin;
 import de.netzkronehd.coins.api.event.CoinsChangeEvent;
+import de.netzkronehd.coins.api.event.CoinsSourceSavedAsyncEvent;
+import de.netzkronehd.coins.api.event.CoinsSourceSavedEvent;
 
 import java.sql.SQLException;
 import java.util.function.Consumer;
@@ -39,7 +41,7 @@ public abstract class AbstractCoinsSource implements CoinsSource {
     @Override
     public double setCoins(double amount) {
         final double from = getCoins();
-        final var event = new CoinsChangeEvent(this, from, getCoins());
+        final var event = new CoinsChangeEvent(this, from, amount);
         plugin.getServer().getPluginManager().callEvent(event);
         if(event.isCancelled()) {
             return from;
@@ -56,13 +58,15 @@ public abstract class AbstractCoinsSource implements CoinsSource {
     @Override
     public void save() throws SQLException {
         plugin.getDatabaseService().getDatabase().updatePlayer(getUniqueId(), getName(), getCoins());
+        plugin.getServer().getPluginManager().callEvent(new CoinsSourceSavedEvent(this));
     }
 
     @Override
     public void saveAsync(Consumer<CoinsSource> afterSave, Consumer<SQLException> onError) {
         plugin.runAsync(() -> {
             try {
-                save();
+                plugin.getDatabaseService().getDatabase().updatePlayer(getUniqueId(), getName(), getCoins());
+                plugin.getServer().getPluginManager().callEvent(new CoinsSourceSavedAsyncEvent(this));
                 if (afterSave != null) afterSave.accept(this);
             } catch (SQLException e) {
                 if (onError != null) {

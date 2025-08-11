@@ -3,7 +3,7 @@ version: ${project.version}
 main: de.netzkronehd.coins.CoinsPlugin
 author: NetzkroneHD
 website: https://github.com/NetzkroneHD
-api-version: '1.21'
+api-version: '1.13'
 
 softdepend:
   - Vault

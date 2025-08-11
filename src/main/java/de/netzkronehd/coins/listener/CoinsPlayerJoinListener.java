@@ -26,6 +26,7 @@ public class CoinsPlayerJoinListener implements Listener {
                 0,
                 event.getPlayer()
         );
+        plugin.getPlayerCache().put(player.getUniqueId(), player);
         plugin.getCacheService().getCoinsCache().put(player);
         plugin.runAsync(() -> {
             try {
@@ -43,6 +44,7 @@ public class CoinsPlayerJoinListener implements Listener {
     public void onQuit(PlayerQuitEvent event) {
         plugin.getPlayer(event.getPlayer()).ifPresentOrElse(player -> {
             plugin.getCacheService().getCoinsCache().cachePlayer(player);
+            plugin.getPlayerCache().remove(player.getUniqueId());
             player.saveAsync();
         }, () -> plugin.getLogger().severe("Tried to cache player " + event.getPlayer().getName() + " but they were not found in the player cache."));
     }

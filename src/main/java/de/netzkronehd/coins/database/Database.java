@@ -153,10 +153,7 @@ public abstract class Database {
         final PreparedStatement ps = connection.prepareStatement("SELECT player_uniqueId, player_name, coins FROM coinsapi_players");
         final ResultSet rs = ps.executeQuery();
 
-        rs.last();
-        final List<PlayerEntry> players = new ArrayList<>(rs.getRow());
-        rs.beforeFirst();
-
+        final List<PlayerEntry> players = new ArrayList<>();
         while (rs.next()) {
             players.add(PlayerEntry.of(UUID.fromString(rs.getString("player_uniqueId")), rs.getString("player_name"), rs.getDouble("coins")));
         }

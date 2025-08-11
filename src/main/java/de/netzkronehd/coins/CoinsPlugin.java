@@ -57,6 +57,8 @@ public final class CoinsPlugin extends JavaPlugin {
         cacheService.createConfig();
 
         databaseService.readConfig();
+        cacheService.readConfig();
+
         cacheService.startCacheReloadTask();
         saveDefaultConfig();
         loadConfig();

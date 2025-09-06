@@ -10,6 +10,7 @@ import de.netzkronehd.coins.source.PlayerCoinsSource;
 import org.bukkit.entity.Player;
 
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -41,6 +42,10 @@ public interface CoinsApi {
             return Optional.empty();
         }
         return getCache().get(name);
+    }
+
+    default List<CoinsSource> getToplist(int maxEntries) {
+        return getCache().getToplist(maxEntries);
     }
 
     Optional<PlayerCoinsSource> getPlayer(UUID uuid);

@@ -12,8 +12,8 @@ public class CoinsSourceSavedEvent extends Event {
     public static final HandlerList handlerList = new HandlerList();
     private final CoinsSource coinsSource;
 
-    public CoinsSourceSavedEvent(CoinsSource coinsSource) {
-        super(true);
+    public CoinsSourceSavedEvent(CoinsSource coinsSource, boolean async) {
+        super(async);
         this.coinsSource = coinsSource;
     }
 

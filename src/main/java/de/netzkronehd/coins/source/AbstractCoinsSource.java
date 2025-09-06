@@ -3,7 +3,6 @@ package de.netzkronehd.coins.source;
 import com.google.common.util.concurrent.AtomicDouble;
 import de.netzkronehd.coins.CoinsPlugin;
 import de.netzkronehd.coins.api.event.CoinsChangeEvent;
-import de.netzkronehd.coins.api.event.CoinsSourceSavedAsyncEvent;
 import de.netzkronehd.coins.api.event.CoinsSourceSavedEvent;
 
 import java.sql.SQLException;
@@ -42,7 +41,7 @@ public abstract class AbstractCoinsSource implements CoinsSource {
     public double setCoins(double amount) {
         final double from = getCoins();
         final var event = new CoinsChangeEvent(this, from, amount);
-        plugin.getServer().getPluginManager().callEvent(event);
+        plugin.getServer().getScheduler().runTask(plugin, () -> plugin.getServer().getPluginManager().callEvent(event));
         if(event.isCancelled()) {
             return from;
         }
@@ -58,7 +57,7 @@ public abstract class AbstractCoinsSource implements CoinsSource {
     @Override
     public void save() throws SQLException {
         plugin.getDatabaseService().getDatabase().updatePlayer(getUniqueId(), getName(), getCoins());
-        plugin.getServer().getPluginManager().callEvent(new CoinsSourceSavedEvent(this));
+        plugin.getServer().getPluginManager().callEvent(new CoinsSourceSavedEvent(this, false));
     }
 
     @Override
@@ -66,13 +65,13 @@ public abstract class AbstractCoinsSource implements CoinsSource {
         plugin.runAsync(() -> {
             try {
                 plugin.getDatabaseService().getDatabase().updatePlayer(getUniqueId(), getName(), getCoins());
-                plugin.getServer().getPluginManager().callEvent(new CoinsSourceSavedAsyncEvent(this));
+                plugin.getServer().getPluginManager().callEvent(new CoinsSourceSavedEvent(this, true));
                 if (afterSave != null) afterSave.accept(this);
             } catch (SQLException e) {
                 if (onError != null) {
                     onError.accept(e);
                 } else {
-                    plugin.getLogger().severe("Failed to save coins for player " + getName() + ": " + e);
+                    throw new RuntimeException(e);
                 }
             }
         });

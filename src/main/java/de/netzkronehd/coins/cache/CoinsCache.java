@@ -72,4 +72,15 @@ public class CoinsCache {
         nameCache.clear();
         uuidCache.clear();
     }
+
+    public Collection<CoinsSource> getAll() {
+        return uuidCache.values();
+    }
+
+    public List<CoinsSource> getToplist(int maxEntries) {
+        return uuidCache.values().stream()
+                .sorted(Comparator.comparingDouble(CoinsSource::getCoins).reversed())
+                .limit(maxEntries)
+                .toList();
+    }
 }

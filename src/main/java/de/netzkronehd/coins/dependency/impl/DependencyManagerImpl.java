@@ -31,12 +31,12 @@ public class DependencyManagerImpl implements DependencyManager {
     private final Map<Dependency, Class<?>> loadedDependencies;
     private final HttpClient httpClient;
 
-    public DependencyManagerImpl(Path dependenciesFolder) {
+    public DependencyManagerImpl(Path dependenciesFolder) throws IOException {
         this.dependenciesFolder = dependenciesFolder;
         this.loadedDependencies = new HashMap<>();
         this.httpClient = HttpClient.newHttpClient();
         if (!Files.exists(dependenciesFolder)) {
-            dependenciesFolder.toFile().mkdirs();
+            Files.createDirectories(dependenciesFolder);
         }
     }
 

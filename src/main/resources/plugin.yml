@@ -4,6 +4,7 @@ main: de.netzkronehd.coins.CoinsPlugin
 author: NetzkroneHD
 website: https://github.com/NetzkroneHD
 api-version: '1.13'
+load: STARTUP
 
 softdepend:
   - Vault

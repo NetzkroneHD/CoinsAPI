@@ -48,10 +48,11 @@ public abstract class AbstractCoinsSource implements CoinsSource {
             return from;
         }
         coinsHolder.set(event.getTo());
+        final var newCoins = getCoins();
         if(plugin.getCoinsConfig().isSendUpdateMessages()) {
-            plugin.getCoinsApi().publishUpdate(this, SET, event.getTo());
+            plugin.getCoinsApi().publishUpdate(this, SET, newCoins);
         }
-        return getCoins();
+        return newCoins;
     }
 
     @Override

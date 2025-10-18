@@ -3,10 +3,12 @@ package de.netzkronehd.coins.message.redis;
 import de.netzkronehd.coins.CoinsPlugin;
 import de.netzkronehd.coins.message.listener.CoinsUpdateListener;
 import de.netzkronehd.coins.message.publisher.CoinsUpdateRedisPublisher;
+import lombok.Getter;
 
 import java.io.Closeable;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+@Getter
 public class RedisClient implements Closeable {
 
     private final CoinsPlugin plugin;

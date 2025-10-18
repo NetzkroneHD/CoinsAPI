@@ -126,9 +126,9 @@ public final class CoinsPlugin extends JavaPlugin {
             final var redisCredentials = new RedisCredentials(
                     getConfig().getString("redis.host", "localhost"),
                     getConfig().getInt("redis.port", 6379),
-                    getConfig().getString("redis.user"),
-                    getConfig().getString("redis.password"),
-                    getConfig().getString("redis.client-name", "netzcoinsapi"),
+                    getConfig().getString("redis.user", null),
+                    getConfig().getString("redis.password", null),
+                    getConfig().getString("redis.client-name", null),
                     getConfig().getInt("redis.database", 0)
             );
             final var redisChannel = getConfig().getString("redis.channel", "netzcoinsapi");
@@ -141,15 +141,15 @@ public final class CoinsPlugin extends JavaPlugin {
                     getLogger().info("Using Plugin Message Channel for coins update messages.");
                 }
                 case REDIS -> {
-                    // TODO
                     this.redisClient = new RedisClient(this, redisCredentials, redisChannel, coinsUpdateListener);
-                    this.coinsUpdateMessagePublisher =
+                    this.coinsUpdateMessagePublisher = redisClient.getPublisher();
+                    this.redisClient.runAfterReady(() -> getLogger().info("Connected to Redis server at " + redisCredentials.host() + ":" + redisCredentials.port() + " and listening on channel '" + redisChannel + "'."));
+                    getLogger().info("Connecting to Redis server at " + redisCredentials.host() + ":" + redisCredentials.port() + "@"+redisCredentials.user());
+                    this.redisClient.connect();
+                    getLogger().info("Using Redis for coins update messages.");
                 }
             }
-
         }
-
-
     }
 
     private void loadDependencies() throws DependencyDownloadException, IOException, InterruptedException, ClassNotFoundException, DependencyNotDownloadedException {

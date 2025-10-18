@@ -6,7 +6,7 @@
 
     <groupId>de.netzkronehd.coins</groupId>
     <artifactId>coinsapi</artifactId>
-    <version>1.0.2</version>
+    <version>1.0.3-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <properties>
@@ -17,7 +17,7 @@
         <sqlite.version>3.47.1.0</sqlite.version>
         <postgres.version>42.7.7</postgres.version>
         <luckperms.version>5.5</luckperms.version>
-        <redis.version>5.1.3</redis.version>
+        <redis.version>7.0.0</redis.version>
     </properties>
 
 
@@ -89,6 +89,7 @@
             <version>${postgres.version}</version>
         </dependency>
 
+        <!-- https://mvnrepository.com/artifact/redis.clients/jedis -->
         <dependency>
             <groupId>redis.clients</groupId>
             <artifactId>jedis</artifactId>
@@ -137,6 +138,21 @@
                 <artifactId>maven-shade-plugin</artifactId>
                 <version>3.6.0</version>
                 <executions>
+                    <execution>
+                        <id>relocate</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <relocations>
+                                <relocation>
+                                    <pattern>redis.clients</pattern>
+                                    <shadedPattern>de.netzkronehd.coins.lib.redis.clients</shadedPattern>
+                                </relocation>
+                            </relocations>
+                        </configuration>
+                    </execution>
                     <execution>
                         <id>remove</id>
                         <phase>package</phase>

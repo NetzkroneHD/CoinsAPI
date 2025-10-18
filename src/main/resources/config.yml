@@ -1,8 +1,23 @@
 decimal-format: "#,##0.00"
 locale: de
+# Whether to send update messages to other NetzCoinsApi plugin instances. Requires a BungeeCord or Velocity server network.
+# If you disable this, features like cross-server balances will not work.
+update-messages:
+  enabled: true
+  # Communication Mode: "PLUGIN_MESSAGE" or "REDIS"
+  mode: PLUGIN_MESSAGE
+# Name of the economy as it appears in Vault and other economy plugins.
 economy-name: "NetzCoinsEconomy"
 currency:
   symbol: "C"
   name:
     singular: "Coin"
     plural: "Coins"
+redis:
+  host: "localhost"
+  port: 6379
+  user: "user"
+  password: "password"
+  client-name: "netzcoinsapi"
+  database: 0
+  channel: "netzcoinsapi"

@@ -7,6 +7,8 @@ import de.netzkronehd.coins.cache.CoinsCache;
 import de.netzkronehd.coins.config.CoinsConfig;
 import de.netzkronehd.coins.database.DatabaseService;
 import de.netzkronehd.coins.economy.CoinsEconomy;
+import de.netzkronehd.coins.message.model.CoinsUpdateMessage;
+import de.netzkronehd.coins.message.model.UpdateType;
 import de.netzkronehd.coins.source.CacheCoinsSource;
 import de.netzkronehd.coins.source.CoinsSource;
 import de.netzkronehd.coins.source.PlayerCoinsSource;
@@ -58,6 +60,13 @@ public class CoinsApiImpl implements CoinsApi {
     @Override
     public void loadCache() throws SQLException {
         plugin.getCacheService().loadCache();
+    }
+
+    @Override
+    public CoinsUpdateMessage publishUpdate(CoinsSource source, UpdateType updateType, double amount) {
+        var message = CoinsUpdateMessage.of(source.getUniqueId(), updateType, amount);
+        plugin.getCoinsUpdateMessagePublisher().publishMessage(message);
+        return message;
     }
 
     @Override

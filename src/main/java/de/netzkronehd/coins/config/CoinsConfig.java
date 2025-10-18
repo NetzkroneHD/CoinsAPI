@@ -16,6 +16,7 @@ public class CoinsConfig {
     private String currencySymbol;
     private String currencyNamePlural;
     private String currencyNameSingular;
+    private boolean sendUpdateMessages;
 
 
 }

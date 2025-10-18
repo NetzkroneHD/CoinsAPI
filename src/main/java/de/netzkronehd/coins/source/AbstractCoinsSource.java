@@ -8,6 +8,8 @@ import de.netzkronehd.coins.api.event.CoinsSourceSavedEvent;
 import java.sql.SQLException;
 import java.util.function.Consumer;
 
+import static de.netzkronehd.coins.message.model.UpdateType.SET;
+
 public abstract class AbstractCoinsSource implements CoinsSource {
 
     protected final CoinsPlugin plugin;
@@ -46,6 +48,9 @@ public abstract class AbstractCoinsSource implements CoinsSource {
             return from;
         }
         coinsHolder.set(event.getTo());
+        if(plugin.getCoinsConfig().isSendUpdateMessages()) {
+            plugin.getCoinsApi().publishUpdate(this, SET, event.getTo());
+        }
         return getCoins();
     }
 

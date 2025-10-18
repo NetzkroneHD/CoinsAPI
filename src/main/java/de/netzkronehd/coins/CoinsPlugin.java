@@ -13,6 +13,13 @@ import de.netzkronehd.coins.dependency.exception.DependencyNotDownloadedExceptio
 import de.netzkronehd.coins.dependency.impl.DependencyManagerImpl;
 import de.netzkronehd.coins.economy.CoinsEconomy;
 import de.netzkronehd.coins.listener.CoinsPlayerJoinListener;
+import de.netzkronehd.coins.message.CommunicationMode;
+import de.netzkronehd.coins.message.listener.CoinsUpdateListener;
+import de.netzkronehd.coins.message.listener.CoinsUpdatePluginMessageListener;
+import de.netzkronehd.coins.message.publisher.CoinsUpdateMessagePublisher;
+import de.netzkronehd.coins.message.publisher.CoinsUpdatePluginMessagePublisher;
+import de.netzkronehd.coins.message.redis.RedisClient;
+import de.netzkronehd.coins.message.redis.RedisCredentials;
 import de.netzkronehd.coins.source.PlayerCoinsSource;
 import lombok.Getter;
 import org.bukkit.entity.Player;
@@ -24,8 +31,12 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.*;
 
+import static de.netzkronehd.coins.message.CommunicationMode.PLUGIN_MESSAGE;
+
 @Getter
 public final class CoinsPlugin extends JavaPlugin {
+
+    public static final UUID INSTANCE_ID = UUID.randomUUID();
 
     @Getter
     public static CoinsPlugin instance;
@@ -39,6 +50,10 @@ public final class CoinsPlugin extends JavaPlugin {
     private DatabaseService databaseService;
     private CoinsEconomy coinsEconomy;
 
+    private RedisClient redisClient;
+    private CoinsUpdateListener coinsUpdateListener;
+    private CoinsUpdateMessagePublisher coinsUpdateMessagePublisher;
+
     @Override
     public void onLoad() {
         instance = this;
@@ -49,6 +64,7 @@ public final class CoinsPlugin extends JavaPlugin {
         }
         cacheService = new CacheService(this);
         databaseService = new DatabaseService(this);
+
     }
 
     @Override
@@ -93,6 +109,7 @@ public final class CoinsPlugin extends JavaPlugin {
     }
 
     private void loadConfig() {
+        final var sendUpdateMessages = getConfig().getBoolean("update-messages.enabled", true);
         final var decimalFormat = new DecimalFormat(getConfig().getString("decimal-format", "#,##0.00"));
         decimalFormat.setDecimalFormatSymbols(DecimalFormatSymbols.getInstance(Locale.of(getConfig().getString("locale", "de"))));
 
@@ -101,8 +118,38 @@ public final class CoinsPlugin extends JavaPlugin {
         final var currencyNameSingular = getConfig().getString("currency.name.singular", "Coin");
         final var currencyNamePlural = getConfig().getString("currency.name.plural", "Coins");
 
-        this.coinsConfig = new CoinsConfig(decimalFormat, economyName, currencySymbol, currencyNameSingular, currencyNamePlural);
+        this.coinsConfig = new CoinsConfig(decimalFormat, economyName, currencySymbol, currencyNameSingular, currencyNamePlural, sendUpdateMessages);
         getLogger().info("Coins configuration loaded successfully.");
+
+        if(sendUpdateMessages) {
+            final var mode = CommunicationMode.valueOf(getConfig().getString("update-messages.mode", PLUGIN_MESSAGE.name()).toUpperCase());
+            final var redisCredentials = new RedisCredentials(
+                    getConfig().getString("redis.host", "localhost"),
+                    getConfig().getInt("redis.port", 6379),
+                    getConfig().getString("redis.user"),
+                    getConfig().getString("redis.password"),
+                    getConfig().getString("redis.client-name", "netzcoinsapi"),
+                    getConfig().getInt("redis.database", 0)
+            );
+            final var redisChannel = getConfig().getString("redis.channel", "netzcoinsapi");
+
+            this.coinsUpdateListener = new CoinsUpdateListener(this);
+            switch (mode) {
+                case PLUGIN_MESSAGE -> {
+                    this.coinsUpdateMessagePublisher = new CoinsUpdatePluginMessagePublisher(this);
+                    new CoinsUpdatePluginMessageListener(this, coinsUpdateListener);
+                    getLogger().info("Using Plugin Message Channel for coins update messages.");
+                }
+                case REDIS -> {
+                    // TODO
+                    this.redisClient = new RedisClient(this, redisCredentials, redisChannel, coinsUpdateListener);
+                    this.coinsUpdateMessagePublisher =
+                }
+            }
+
+        }
+
+
     }
 
     private void loadDependencies() throws DependencyDownloadException, IOException, InterruptedException, ClassNotFoundException, DependencyNotDownloadedException {

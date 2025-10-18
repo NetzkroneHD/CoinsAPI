@@ -5,6 +5,8 @@ import de.netzkronehd.coins.cache.CoinsCache;
 import de.netzkronehd.coins.config.CoinsConfig;
 import de.netzkronehd.coins.database.DatabaseService;
 import de.netzkronehd.coins.economy.CoinsEconomy;
+import de.netzkronehd.coins.message.model.CoinsUpdateMessage;
+import de.netzkronehd.coins.message.model.UpdateType;
 import de.netzkronehd.coins.source.CoinsSource;
 import de.netzkronehd.coins.source.PlayerCoinsSource;
 import org.bukkit.entity.Player;
@@ -17,6 +19,15 @@ import java.util.UUID;
 public interface CoinsApi {
 
     void loadCache() throws SQLException;
+
+    /**
+     * Publishes an update via the plugin messaging channel to all connected servers.
+     * @param source the source of the coins update
+     * @param updateType the type of update (e.g., ADD, REMOVE, SET)
+     * @param amount the amount of coins involved in the update
+     * @return the CoinsUpdateMessage that was published
+     */
+    CoinsUpdateMessage publishUpdate(CoinsSource source, UpdateType updateType, double amount);
 
     /**
      * Creates a new cache source for the given UUID, name, and coins amount.

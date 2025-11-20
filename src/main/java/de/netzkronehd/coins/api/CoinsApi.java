@@ -1,5 +1,6 @@
 package de.netzkronehd.coins.api;
 
+import de.netzkronehd.coins.CoinsPlugin;
 import de.netzkronehd.coins.cache.CacheService;
 import de.netzkronehd.coins.cache.CoinsCache;
 import de.netzkronehd.coins.config.CoinsConfig;
@@ -77,5 +78,9 @@ public interface CoinsApi {
     DatabaseService getDatabaseService();
     CacheService getCacheService();
     CoinsEconomy getCoinsEconomy();
+
+    static CoinsApi getInstance() {
+        return CoinsPlugin.getInstance().getCoinsApi();
+    }
 
 }

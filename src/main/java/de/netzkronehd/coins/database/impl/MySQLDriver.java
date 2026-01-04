@@ -4,30 +4,14 @@ package de.netzkronehd.coins.database.impl;
 import de.netzkronehd.coins.database.Database;
 import de.netzkronehd.coins.dependency.Dependency;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.Properties;
-
 public class MySQLDriver extends Database {
 
     public MySQLDriver() {
     }
 
     @Override
-    public Connection createConnection(String host, int port, String database, String user, String password) throws SQLException, NoSuchMethodException, InvocationTargetException, IllegalAccessException, InstantiationException {
-        if (driverClass == null) {
-            throw new IllegalStateException("ClassLoader is not set.");
-        }
-        final Object driverInstance = driverClass.getConstructor().newInstance();
-        final Method connectMethod = driverInstance.getClass().getMethod("connect", String.class, Properties.class);
-        connectMethod.setAccessible(true);
-        final Properties properties = new Properties();
-        properties.setProperty("user", user);
-        properties.setProperty("password", password);
-        properties.setProperty("autoReconnect", "true");
-        return (Connection) connectMethod.invoke(driverInstance, "jdbc:mysql://" + host + ":" + port + "/" + database + "?autoReconnect=true", properties);
+    public String getJdbcUrl(String host, int port, String database) {
+        return "jdbc:mysql://" + host + ":" + port + "/" + database + "?autoReconnect=true";
     }
 
     @Override

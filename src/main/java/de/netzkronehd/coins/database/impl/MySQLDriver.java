@@ -6,9 +6,6 @@ import de.netzkronehd.coins.dependency.Dependency;
 
 public class MySQLDriver extends Database {
 
-    public MySQLDriver() {
-    }
-
     @Override
     public String getJdbcUrl(String host, int port, String database) {
         return "jdbc:mysql://" + host + ":" + port + "/" + database + "?autoReconnect=true";

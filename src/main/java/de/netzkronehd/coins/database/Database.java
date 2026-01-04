@@ -8,6 +8,7 @@ import de.netzkronehd.coins.database.model.UuidAndName;
 import de.netzkronehd.coins.dependency.Dependency;
 import de.netzkronehd.coins.dependency.DependencyManager;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -31,27 +32,23 @@ public abstract class Database {
     }
 
     public void connect(DatabaseConfig config) {
-        connect(config.getHost(), config.getPort(), config.getDatabase(), config.getUsername(), config.getPassword());
+        loadDataSource(config.getHost(), config.getPort(), config.getDatabase(), config.getUsername(), config.getPassword(), config.getMaximumPoolSize(), config.getMinimumIdle());
     }
 
-    public void connect(String host, int port, String database, String user, String password) {
-        loadDataSource(host, port, database, user, password);
-    }
-
-    private void loadDataSource(String host, int port, String database, String user, String password) {
+    public void loadDataSource(String host, int port, String database, String user, String password, int maximumPoolSize, int minimumIdle) {
         var cfg = new HikariConfig();
         cfg.setJdbcUrl(getJdbcUrl(host, port, database));
         cfg.setUsername(user);
         cfg.setPassword(password);
-        cfg.setMaximumPoolSize(10);
-        cfg.setMinimumIdle(2);
+        cfg.setMaximumPoolSize(maximumPoolSize);
+        cfg.setMinimumIdle(minimumIdle);
         cfg.setAutoCommit(true);
         cfg.setPoolName("netzcoinsapi-"+getName().toLowerCase());
         this.dataSource = new HikariDataSource(cfg);
     }
 
     public void createTables() throws SQLException {
-        final var connection = dataSource.getConnection();
+        final var connection = getConnection();
         connection.prepareStatement("""
                 CREATE TABLE IF NOT EXISTS coinsapi_players
                 (
@@ -64,7 +61,7 @@ public abstract class Database {
     }
 
     public int insertPlayer(UUID uuid, String playerName) throws SQLException {
-        final var connection = dataSource.getConnection();
+        final var connection = getConnection();
         final PreparedStatement ps = connection.prepareStatement("""
                 INSERT INTO coinsapi_players (player_uniqueId, player_name)
                 VALUES (?, ?)
@@ -75,7 +72,7 @@ public abstract class Database {
     }
 
     public int insertPlayer(UUID uuid, String playerName, double coins) throws SQLException {
-        final var connection = dataSource.getConnection();
+        final var connection = getConnection();
         final PreparedStatement ps = connection.prepareStatement("""
                 INSERT INTO coinsapi_players (player_uniqueId, player_name, coins)
                 VALUES (?, ?, ?)
@@ -95,7 +92,7 @@ public abstract class Database {
     }
 
     public boolean playerExists(UUID uuid) throws SQLException {
-        final var connection = dataSource.getConnection();
+        final var connection = getConnection();
         final PreparedStatement ps = connection.prepareStatement("""
                 SELECT player_uniqueId
                 FROM coinsapi_players
@@ -106,7 +103,7 @@ public abstract class Database {
     }
 
     public void updatePlayers(List<PlayerEntry> entries) throws SQLException {
-        final var connection = dataSource.getConnection();
+        final var connection = getConnection();
         final PreparedStatement ps = connection.prepareStatement("""
                 UPDATE coinsapi_players
                 SET player_name = ?, coins = ?
@@ -122,7 +119,7 @@ public abstract class Database {
     }
 
     public void updatePlayer(UUID uuid, String playerName, double coins) throws SQLException {
-        final var connection = dataSource.getConnection();
+        final var connection = getConnection();
         final PreparedStatement ps = connection.prepareStatement("""
                 UPDATE coinsapi_players
                 SET player_name = ?, coins = ?
@@ -135,7 +132,7 @@ public abstract class Database {
     }
 
     public void setCoins(UUID uuid, double coins) throws SQLException {
-        final var connection = dataSource.getConnection();
+        final var connection = getConnection();
         final PreparedStatement ps = connection.prepareStatement("UPDATE coinsapi_players SET coins = ? WHERE player_uniqueId = ?");
         ps.setDouble(1, coins);
         ps.setString(2, uuid.toString());
@@ -143,7 +140,7 @@ public abstract class Database {
     }
 
     public int setName(UUID uuid, String playerName) throws SQLException {
-        final var connection = dataSource.getConnection();
+        final var connection = getConnection();
         final PreparedStatement ps = connection.prepareStatement("UPDATE coinsapi_players SET player_name = ? WHERE player_uniqueId = ?");
         ps.setString(1, playerName);
         ps.setString(2, uuid.toString());
@@ -151,7 +148,7 @@ public abstract class Database {
     }
 
     public Optional<UuidAndName> getUuid(String playerName) throws SQLException {
-        final var connection = dataSource.getConnection();
+        final var connection = getConnection();
         final PreparedStatement ps = connection.prepareStatement("SELECT player_uniqueId, player_name FROM coinsapi_players WHERE LOWER(player_name) = ?");
         ps.setString(1, playerName.toLowerCase());
         final ResultSet rs = ps.executeQuery();
@@ -160,7 +157,7 @@ public abstract class Database {
     }
 
     public Optional<PlayerEntry> getPlayerEntry(UUID uuid) throws SQLException {
-        final var connection = dataSource.getConnection();
+        final var connection = getConnection();
         final PreparedStatement ps = connection.prepareStatement("SELECT player_uniqueId, player_name, coins FROM coinsapi_players WHERE player_uniqueId = ?");
         ps.setString(1, uuid.toString());
         final ResultSet rs = ps.executeQuery();
@@ -169,7 +166,7 @@ public abstract class Database {
     }
 
     public List<PlayerEntry> getAllPlayers() throws SQLException {
-        final var connection = dataSource.getConnection();
+        final var connection = getConnection();
         final PreparedStatement ps = connection.prepareStatement("SELECT player_uniqueId, player_name, coins FROM coinsapi_players");
         final ResultSet rs = ps.executeQuery();
 
@@ -180,13 +177,17 @@ public abstract class Database {
         return players;
     }
 
-    public boolean isConnected() throws SQLException {
+    public boolean isConnected() {
         return dataSource != null && !dataSource.isClosed();
     }
 
-    public void close() throws SQLException {
+    public void close() {
         if (dataSource == null) return;
         dataSource.close();
+    }
+
+    public Connection getConnection() throws SQLException {
+        return dataSource.getConnection();
     }
 
     public abstract String getName();

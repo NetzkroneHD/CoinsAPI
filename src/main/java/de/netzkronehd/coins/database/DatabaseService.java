@@ -36,6 +36,8 @@ public class DatabaseService {
                 .database(cfg.getString("database"))
                 .username(cfg.getString("username"))
                 .password(cfg.getString("password"))
+                .maximumPoolSize(cfg.getInt("maximumPoolSize", 10))
+                .minimumIdle(cfg.getInt("minimumIdle", 1))
                 .build();
         loadDatabase(config);
     }

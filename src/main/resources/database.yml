@@ -7,3 +7,5 @@ port: 3306
 database: coins
 username: username
 password: password
+maximumPoolSize: 10
+minimumIdle: 1

@@ -24,6 +24,8 @@ public class DatabaseConfig implements Destroyable {
     private String database;
     private String username;
     private String password;
+    private int maximumPoolSize = 10;
+    private int minimumIdle = 0;
 
     public Database createDatabase(Path sqlitePath) {
         return switch (driver.toLowerCase()) {
@@ -49,6 +51,8 @@ public class DatabaseConfig implements Destroyable {
                 ", database='" + database + '\'' +
                 ", port=" + port +
                 ", host='" + host + '\'' +
+                ", maximumPoolSize='" + maximumPoolSize + '\'' +
+                ", minimumIdle='" + minimumIdle + '\'' +
                 ", driver='" + driver + '\'' +
                 '}';
     }

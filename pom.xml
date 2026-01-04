@@ -155,6 +155,10 @@
                         <configuration>
                             <relocations>
                                 <relocation>
+                                    <pattern>com.zaxxer.hikari</pattern>
+                                    <shadedPattern>de.netzkronehd.coins.lib.com.zaxxer.hikari</shadedPattern>
+                                </relocation>
+                                <relocation>
                                     <pattern>redis.clients</pattern>
                                     <shadedPattern>de.netzkronehd.coins.lib.redis.clients</shadedPattern>
                                 </relocation>

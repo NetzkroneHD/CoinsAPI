@@ -12,7 +12,6 @@ import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
 
-import static de.netzkronehd.coins.locale.MessageUtils.prefix;
 import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.Component.translatable;
 
@@ -20,23 +19,23 @@ public class AdminCoinsCommand extends Command {
 
     private static final Args.Args0 NO_PERMISSIONS = () -> translatable()
             .key("netzcoins.command.admincoins.no-permissions")
-            .arguments(prefix()).build();
+            .arguments().build();
 
     private static final Args.Args1<String> USAGE = (commandLabel) -> translatable()
             .key("netzcoins.command.admincoins.usage")
-            .arguments(prefix(), text(commandLabel)).build();
+            .arguments(text(commandLabel)).build();
 
     private static final Args.Args1<String> SOURCE_NOT_FOUND = (name) -> translatable()
             .key("netzcoins.command.admincoins.source-not-found")
-            .arguments(prefix(), text(name)).build();
+            .arguments(text(name)).build();
 
     private static final Args.Args2<String, SQLException> FAILED_UPDATE = (name, ex) -> translatable()
             .key("netzcoins.command.admincoins.failed-update")
-            .arguments(prefix(), text(name), text(ex.toString())).build();
+            .arguments(text(name), text(ex.toString())).build();
 
     private static final Args.Args4<String, String, String, UpdateType> SUCCESS_UPDATE = (name, amount, currencyName, type) -> translatable()
             .key("netzcoins.command.admincoins.success-update")
-            .arguments(prefix(), text(name), text(amount), text(currencyName), text(type.name())).build();
+            .arguments(text(name), text(amount), text(currencyName), text(type.name())).build();
 
 
     private final CoinsPlugin plugin;

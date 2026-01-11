@@ -14,10 +14,6 @@ import static net.kyori.adventure.text.format.NamedTextColor.*;
 
 public interface MessageUtils {
 
-    static Component prefix() {
-        return translatable().key("netzcoinsapi.prefix").build();
-    }
-
     static TextComponent toText(ComponentLike component) {
         return text().append(component).build();
     }

@@ -10,7 +10,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-import static de.netzkronehd.coins.locale.MessageUtils.prefix;
 import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.Component.translatable;
 
@@ -18,27 +17,27 @@ public class CoinsCommand extends Command {
 
     private static final Args.Args0 NO_PERMISSIONS = () -> translatable()
             .key("netzcoins.command.coins.no-permissions")
-            .arguments(prefix()).build();
+            .arguments().build();
 
     private static final Args.Args0 ONLY_PLAYERS = () -> translatable()
             .key("netzcoins.command.coins.only-players")
-            .arguments(prefix()).build();
+            .arguments().build();
 
     private static final Args.Args1<String> PLAYER_NOT_FOUND = (playerName) -> translatable()
             .key("netzcoins.command.coins.player-not-found")
-            .arguments(prefix(), text(playerName)).build();
+            .arguments(text(playerName)).build();
 
     private static final Args.Args1<String> USAGE = (commandLabel) -> translatable()
             .key("netzcoins.command.coins.usage")
-            .arguments(prefix(), text(commandLabel)).build();
+            .arguments(text(commandLabel)).build();
 
     private static final Args.Args2<String, String> OWN_COINS_BALANCE = (coins, currencyName) -> translatable()
             .key("netzcoins.command.coins.own-balance")
-            .arguments(prefix(), text(coins), text(currencyName)).build();
+            .arguments(text(coins), text(currencyName)).build();
 
     private static final Args.Args3<CoinsSource, String, String> OTHER_COINS_BALANCE = (source, coins, currencyName) -> translatable()
             .key("netzcoins.command.coins.other-balance")
-            .arguments(prefix(), text(source.getName()), text(coins), text(currencyName)).build();
+            .arguments(text(source.getName()), text(coins), text(currencyName)).build();
 
 
     private final CoinsPlugin plugin;

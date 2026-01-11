@@ -1,3 +1,4 @@
+prefix: <gradient:#4498DB:#00FFFF>NCoins</gradient><dark_gray> »</dark_gray><gray>
 decimal-format: "#,##0.00"
 locale: de
 # Whether to send update messages to other NetzCoinsApi plugin instances. Requires a BungeeCord or Velocity server network.

@@ -71,6 +71,26 @@ public interface CoinsApi {
         return getPlayer(player.getUniqueId());
     }
 
+    default String formatCoins(double amount) {
+        return getConfig().getDecimalFormat().format(amount);
+    }
+
+    default String formatCurrencyName(double amount) {
+        return amount == 1.0 ? currencyNameSingular() : currencyNamePlural();
+    }
+
+    default String formatCoinsWithCurrencyName(double amount) {
+        return formatCoins(amount) + " " + formatCurrencyName(amount);
+    }
+
+    default String currencyNamePlural() {
+        return getConfig().getCurrencyNamePlural();
+    }
+
+    default String currencyNameSingular() {
+        return getConfig().getCurrencyNameSingular();
+    }
+
     CoinsCache getCache();
 
     CoinsConfig getConfig();

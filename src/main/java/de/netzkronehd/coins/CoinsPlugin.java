@@ -3,6 +3,8 @@ package de.netzkronehd.coins;
 import de.netzkronehd.coins.api.CoinsApi;
 import de.netzkronehd.coins.api.impl.CoinsApiImpl;
 import de.netzkronehd.coins.cache.CacheService;
+import de.netzkronehd.coins.command.AdminCoinsCommand;
+import de.netzkronehd.coins.command.CoinsCommand;
 import de.netzkronehd.coins.config.CoinsConfig;
 import de.netzkronehd.coins.database.DatabaseService;
 import de.netzkronehd.coins.database.model.PlayerEntry;
@@ -13,6 +15,8 @@ import de.netzkronehd.coins.dependency.exception.DependencyNotDownloadedExceptio
 import de.netzkronehd.coins.dependency.impl.DependencyManagerImpl;
 import de.netzkronehd.coins.economy.CoinsEconomy;
 import de.netzkronehd.coins.listener.CoinsPlayerJoinListener;
+import de.netzkronehd.coins.locale.TranslationService;
+import de.netzkronehd.coins.locale.UnknownLocaleException;
 import de.netzkronehd.coins.message.CommunicationMode;
 import de.netzkronehd.coins.message.listener.CoinsUpdateListener;
 import de.netzkronehd.coins.message.listener.CoinsUpdatePluginMessageListener;
@@ -22,6 +26,7 @@ import de.netzkronehd.coins.message.redis.RedisClient;
 import de.netzkronehd.coins.message.redis.RedisCredentials;
 import de.netzkronehd.coins.source.PlayerCoinsSource;
 import lombok.Getter;
+import net.kyori.adventure.key.Key;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -53,6 +58,7 @@ public final class CoinsPlugin extends JavaPlugin {
     private RedisClient redisClient;
     private CoinsUpdateListener coinsUpdateListener;
     private CoinsUpdateMessagePublisher coinsUpdateMessagePublisher;
+    private TranslationService translationService;
 
     @Override
     public void onLoad() {
@@ -64,6 +70,7 @@ public final class CoinsPlugin extends JavaPlugin {
         }
         cacheService = new CacheService(this);
         databaseService = new DatabaseService(this);
+        translationService = new TranslationService(Key.key("netzcoinsapi", "translations"));
 
     }
 
@@ -90,6 +97,21 @@ public final class CoinsPlugin extends JavaPlugin {
         }
 
         getServer().getPluginManager().registerEvents(new CoinsPlayerJoinListener(this), this);
+
+        getLogger().info("Loading translations and commands...");
+
+        try {
+            saveResource("locales/en.properties", false);
+            saveResource("locales/de.properties", false);
+            translationService.loadFromFileSystem(this.getDataPath().resolve("locales/"));
+        } catch (IOException | UnknownLocaleException e) {
+            throw new RuntimeException(e);
+        }
+
+        getServer().getCommandMap().register("netzcoinsapi", new AdminCoinsCommand(this));
+        getServer().getCommandMap().register("netzcoinsapi", new CoinsCommand(this));
+
+        getLogger().info("CoinsPlugin enabled successfully.");
 
     }
 

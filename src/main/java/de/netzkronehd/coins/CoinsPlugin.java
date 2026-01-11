@@ -101,6 +101,8 @@ public final class CoinsPlugin extends JavaPlugin {
         getLogger().info("Loading translations and commands...");
 
         try {
+            saveResource("locales/en.properties", false);
+            saveResource("locales/de.properties", false);
             translationService.loadFromFileSystem(this.getDataPath().resolve("locales/"));
         } catch (IOException | UnknownLocaleException e) {
             throw new RuntimeException(e);

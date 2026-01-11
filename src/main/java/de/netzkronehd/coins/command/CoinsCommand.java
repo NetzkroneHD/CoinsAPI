@@ -37,14 +37,14 @@ public class CoinsCommand extends Command {
             .arguments(prefix(), text(coins), text(currencyName)).build();
 
     private static final Args.Args3<CoinsSource, String, String> OTHER_COINS_BALANCE = (source, coins, currencyName) -> translatable()
-            .key("netzcoins.command.coins.own-balance")
+            .key("netzcoins.command.coins.other-balance")
             .arguments(prefix(), text(source.getName()), text(coins), text(currencyName)).build();
 
 
     private final CoinsPlugin plugin;
 
     public CoinsCommand(CoinsPlugin plugin) {
-        super("coins", "", "", List.of("coin", "netzcoins", "nc"));
+        super("coins", "", "", List.of("coin", "netzcoins", "nc", "money", "balance", "bal"));
         this.plugin = plugin;
     }
 

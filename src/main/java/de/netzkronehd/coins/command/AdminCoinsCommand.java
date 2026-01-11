@@ -34,9 +34,9 @@ public class AdminCoinsCommand extends Command {
             .key("netzcoins.command.admincoins.failed-update")
             .arguments(prefix(), text(name), text(ex.toString())).build();
 
-    private static final Args.Args3<String, String, String> SUCCESS_UPDATE = (name, amount, type) -> translatable()
+    private static final Args.Args4<String, String, String, UpdateType> SUCCESS_UPDATE = (name, amount, currencyName, type) -> translatable()
             .key("netzcoins.command.admincoins.success-update")
-            .arguments(prefix(), text(name), text(amount), text(type)).build();
+            .arguments(prefix(), text(name), text(amount), text(currencyName), text(type.name())).build();
 
 
     private final CoinsPlugin plugin;
@@ -49,6 +49,7 @@ public class AdminCoinsCommand extends Command {
     @Override
     public boolean execute(@NotNull CommandSender sender, @NotNull String commandLabel, @NotNull String @NotNull [] args) {
         if(!sender.hasPermission("netzcoins.command.admincoins")) {
+            NO_PERMISSIONS.send(sender);
             return true;
         }
 
@@ -65,7 +66,7 @@ public class AdminCoinsCommand extends Command {
             plugin.getCoinsApi().getSource(playerName).ifPresentOrElse(source -> {
                 updateType.apply(source, amount);
                 source.saveAsync(
-                        (_) -> SUCCESS_UPDATE.send(sender, source.getName(), plugin.getCoinsApi().getConfig().getDecimalFormat().format(amount), updateType.name()),
+                        (updatedSource) -> SUCCESS_UPDATE.send(sender, updatedSource.getName(), plugin.getCoinsApi().formatCoins(amount), plugin.getCoinsApi().formatCurrencyName(amount), updateType),
                         (ex) -> {
                             FAILED_UPDATE.send(sender, source.getName(), ex);
                             throw new RuntimeException(ex);

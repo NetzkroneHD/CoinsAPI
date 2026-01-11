@@ -33,9 +33,9 @@ public class AdminCoinsCommand extends Command {
             .key("netzcoins.command.admincoins.failed-update")
             .arguments(text(name), text(ex.toString())).build();
 
-    private static final Args.Args4<String, String, String, UpdateType> SUCCESS_UPDATE = (name, amount, currencyName, type) -> translatable()
+    private static final Args.Args3<String, String, UpdateType> SUCCESS_UPDATE = (name, coins, type) -> translatable()
             .key("netzcoins.command.admincoins.success-update")
-            .arguments(text(name), text(amount), text(currencyName), text(type.name())).build();
+            .arguments(text(name), text(coins), text(type.name())).build();
 
 
     private final CoinsPlugin plugin;
@@ -65,7 +65,7 @@ public class AdminCoinsCommand extends Command {
             plugin.getCoinsApi().getSource(playerName).ifPresentOrElse(source -> {
                 updateType.apply(source, amount);
                 source.saveAsync(
-                        (updatedSource) -> SUCCESS_UPDATE.send(sender, updatedSource.getName(), plugin.getCoinsApi().formatCoins(amount), plugin.getCoinsApi().formatCurrencyName(amount), updateType),
+                        (updatedSource) -> SUCCESS_UPDATE.send(sender, updatedSource.getName(), plugin.getCoinsApi().formatCoinsWithCurrencyName(amount), updateType),
                         (ex) -> {
                             FAILED_UPDATE.send(sender, source.getName(), ex);
                             throw new RuntimeException(ex);

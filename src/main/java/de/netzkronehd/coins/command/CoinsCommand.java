@@ -31,13 +31,13 @@ public class CoinsCommand extends Command {
             .key("netzcoins.command.coins.usage")
             .arguments(text(commandLabel)).build();
 
-    private static final Args.Args2<String, String> OWN_COINS_BALANCE = (coins, currencyName) -> translatable()
+    private static final Args.Args1<String> OWN_COINS_BALANCE = (coins) -> translatable()
             .key("netzcoins.command.coins.own-balance")
-            .arguments(text(coins), text(currencyName)).build();
+            .arguments(text(coins), text(coins)).build();
 
-    private static final Args.Args3<CoinsSource, String, String> OTHER_COINS_BALANCE = (source, coins, currencyName) -> translatable()
+    private static final Args.Args2<CoinsSource, String> OTHER_COINS_BALANCE = (source, coins) -> translatable()
             .key("netzcoins.command.coins.other-balance")
-            .arguments(text(source.getName()), text(coins), text(currencyName)).build();
+            .arguments(text(source.getName()), text(coins)).build();
 
 
     private final CoinsPlugin plugin;
@@ -80,7 +80,7 @@ public class CoinsCommand extends Command {
             return;
         }
         plugin.getCoinsApi().getSource(player.getUniqueId()).ifPresentOrElse(
-                source -> OWN_COINS_BALANCE.send(sender, String.valueOf(source.getCoins()), plugin.getCoinsApi().formatCurrencyName(source.getCoins())),
+                source -> OWN_COINS_BALANCE.send(sender, plugin.getCoinsApi().formatCoinsWithCurrencyName(source.getCoins())),
                 () -> PLAYER_NOT_FOUND.send(sender, player.getName())
         );
     }
@@ -90,7 +90,7 @@ public class CoinsCommand extends Command {
             return;
         }
         plugin.getCoinsApi().getSource(args[0]).ifPresentOrElse(
-                source -> OTHER_COINS_BALANCE.send(sender, source, String.valueOf(source.getCoins()), plugin.getCoinsApi().formatCurrencyName(source.getCoins())),
+                source -> OTHER_COINS_BALANCE.send(sender, source, plugin.getCoinsApi().formatCoinsWithCurrencyName(source.getCoins())),
                 () -> PLAYER_NOT_FOUND.send(sender, args[0])
         );
 

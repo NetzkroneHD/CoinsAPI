@@ -47,7 +47,7 @@ public class AdminCoinsCommand extends Command {
 
     @Override
     public boolean execute(@NotNull CommandSender sender, @NotNull String commandLabel, @NotNull String @NotNull [] args) {
-        if(!sender.hasPermission("netzcoins.command.admincoins")) {
+        if(!sender.hasPermission("netzcoinsapi.command.admincoins")) {
             NO_PERMISSIONS.send(sender);
             return true;
         }
@@ -82,7 +82,7 @@ public class AdminCoinsCommand extends Command {
 
     @Override
     public @NotNull List<String> tabComplete(@NotNull CommandSender sender, @NotNull String alias, @NotNull String @NotNull [] args) throws IllegalArgumentException {
-        if(!sender.hasPermission("netzcoins.command.admincoins")) {
+        if(!sender.hasPermission("netzcoinsapi.command.admincoins")) {
             return List.of();
         }
         if(args.length == 1) {

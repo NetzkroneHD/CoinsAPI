@@ -40,7 +40,7 @@ public class CoinsPlayerJoinListener implements Listener {
         });
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.MONITOR)
     public void onQuit(PlayerQuitEvent event) {
         plugin.getPlayer(event.getPlayer()).ifPresentOrElse(player -> {
             plugin.getCacheService().getCoinsCache().cachePlayer(player);

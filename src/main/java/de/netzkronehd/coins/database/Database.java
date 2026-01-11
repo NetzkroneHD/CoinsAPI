@@ -48,8 +48,8 @@ public abstract class Database {
     }
 
     public void createTables() throws SQLException {
-        final var connection = getConnection();
-        connection.prepareStatement("""
+        try(final var connection = getConnection()) {
+            connection.prepareStatement("""
                 CREATE TABLE IF NOT EXISTS coinsapi_players
                 (
                     player_uniqueId VARCHAR(36) PRIMARY KEY,
@@ -57,30 +57,33 @@ public abstract class Database {
                     coins           DOUBLE DEFAULT 0
                 )
                 """).executeUpdate();
+        }
 
     }
 
     public int insertPlayer(UUID uuid, String playerName) throws SQLException {
-        final var connection = getConnection();
-        final PreparedStatement ps = connection.prepareStatement("""
+        try(final var connection = getConnection()) {
+            final PreparedStatement ps = connection.prepareStatement("""
                 INSERT INTO coinsapi_players (player_uniqueId, player_name)
                 VALUES (?, ?)
                 """);
-        ps.setString(1, uuid.toString());
-        ps.setString(2, playerName);
-        return ps.executeUpdate();
+            ps.setString(1, uuid.toString());
+            ps.setString(2, playerName);
+            return ps.executeUpdate();
+        }
     }
 
     public int insertPlayer(UUID uuid, String playerName, double coins) throws SQLException {
-        final var connection = getConnection();
-        final PreparedStatement ps = connection.prepareStatement("""
+        try(final var connection = getConnection()) {
+            final PreparedStatement ps = connection.prepareStatement("""
                 INSERT INTO coinsapi_players (player_uniqueId, player_name, coins)
                 VALUES (?, ?, ?)
                 """);
-        ps.setString(1, uuid.toString());
-        ps.setString(2, playerName);
-        ps.setDouble(3, coins);
-        return ps.executeUpdate();
+            ps.setString(1, uuid.toString());
+            ps.setString(2, playerName);
+            ps.setDouble(3, coins);
+            return ps.executeUpdate();
+        }
     }
 
     public int insertOrUpdatePlayer(UUID uuid, String playerName) throws SQLException {
@@ -92,89 +95,97 @@ public abstract class Database {
     }
 
     public boolean playerExists(UUID uuid) throws SQLException {
-        final var connection = getConnection();
-        final PreparedStatement ps = connection.prepareStatement("""
+        try(final var connection = getConnection()) {
+            final PreparedStatement ps = connection.prepareStatement("""
                 SELECT player_uniqueId
                 FROM coinsapi_players
                 WHERE player_uniqueId = ?
                 """);
-        ps.setString(1, uuid.toString());
-        return ps.executeQuery().next();
+            ps.setString(1, uuid.toString());
+            return ps.executeQuery().next();
+        }
     }
 
     public void updatePlayers(List<PlayerEntry> entries) throws SQLException {
-        final var connection = getConnection();
-        final PreparedStatement ps = connection.prepareStatement("""
+        try(final var connection = getConnection()) {
+            final PreparedStatement ps = connection.prepareStatement("""
                 UPDATE coinsapi_players
                 SET player_name = ?, coins = ?
                 WHERE player_uniqueId = ?
                 """);
-        for (PlayerEntry entry : entries) {
-            ps.setString(1, entry.name());
-            ps.setDouble(2, entry.coins());
-            ps.setString(3, entry.uuid().toString());
-            ps.addBatch();
+            for (PlayerEntry entry : entries) {
+                ps.setString(1, entry.name());
+                ps.setDouble(2, entry.coins());
+                ps.setString(3, entry.uuid().toString());
+                ps.addBatch();
+            }
+            ps.executeBatch();
         }
-        ps.executeBatch();
     }
 
     public void updatePlayer(UUID uuid, String playerName, double coins) throws SQLException {
-        final var connection = getConnection();
-        final PreparedStatement ps = connection.prepareStatement("""
+        try(final var connection = getConnection()) {
+            final PreparedStatement ps = connection.prepareStatement("""
                 UPDATE coinsapi_players
                 SET player_name = ?, coins = ?
                 WHERE player_uniqueId = ?
                 """);
-        ps.setString(1, playerName);
-        ps.setDouble(2, coins);
-        ps.setString(3, uuid.toString());
-        ps.executeUpdate();
+            ps.setString(1, playerName);
+            ps.setDouble(2, coins);
+            ps.setString(3, uuid.toString());
+            ps.executeUpdate();
+        }
     }
 
     public void setCoins(UUID uuid, double coins) throws SQLException {
-        final var connection = getConnection();
-        final PreparedStatement ps = connection.prepareStatement("UPDATE coinsapi_players SET coins = ? WHERE player_uniqueId = ?");
-        ps.setDouble(1, coins);
-        ps.setString(2, uuid.toString());
-        ps.executeUpdate();
+        try(final var connection = getConnection()) {
+            final PreparedStatement ps = connection.prepareStatement("UPDATE coinsapi_players SET coins = ? WHERE player_uniqueId = ?");
+            ps.setDouble(1, coins);
+            ps.setString(2, uuid.toString());
+            ps.executeUpdate();
+        }
     }
 
     public int setName(UUID uuid, String playerName) throws SQLException {
-        final var connection = getConnection();
-        final PreparedStatement ps = connection.prepareStatement("UPDATE coinsapi_players SET player_name = ? WHERE player_uniqueId = ?");
-        ps.setString(1, playerName);
-        ps.setString(2, uuid.toString());
-        return ps.executeUpdate();
+        try(final var connection = getConnection()) {
+            final PreparedStatement ps = connection.prepareStatement("UPDATE coinsapi_players SET player_name = ? WHERE player_uniqueId = ?");
+            ps.setString(1, playerName);
+            ps.setString(2, uuid.toString());
+            return ps.executeUpdate();
+        }
     }
 
     public Optional<UuidAndName> getUuid(String playerName) throws SQLException {
-        final var connection = getConnection();
-        final PreparedStatement ps = connection.prepareStatement("SELECT player_uniqueId, player_name FROM coinsapi_players WHERE LOWER(player_name) = ?");
-        ps.setString(1, playerName.toLowerCase());
-        final ResultSet rs = ps.executeQuery();
-        if (!rs.next()) return Optional.empty();
-        return Optional.of(UuidAndName.of(UUID.fromString(rs.getString("player_uniqueId")), rs.getString("player_name")));
+        try(final var connection = getConnection()) {
+            final PreparedStatement ps = connection.prepareStatement("SELECT player_uniqueId, player_name FROM coinsapi_players WHERE LOWER(player_name) = ?");
+            ps.setString(1, playerName.toLowerCase());
+            final ResultSet rs = ps.executeQuery();
+            if (!rs.next()) return Optional.empty();
+            return Optional.of(UuidAndName.of(UUID.fromString(rs.getString("player_uniqueId")), rs.getString("player_name")));
+        }
     }
 
     public Optional<PlayerEntry> getPlayerEntry(UUID uuid) throws SQLException {
-        final var connection = getConnection();
-        final PreparedStatement ps = connection.prepareStatement("SELECT player_uniqueId, player_name, coins FROM coinsapi_players WHERE player_uniqueId = ?");
-        ps.setString(1, uuid.toString());
-        final ResultSet rs = ps.executeQuery();
-        if (!rs.next()) return Optional.empty();
-        return Optional.of(PlayerEntry.of(UUID.fromString(rs.getString("player_uniqueId")), rs.getString("player_name"), rs.getDouble("coins")));
+        try(final var connection = getConnection()) {
+            final PreparedStatement ps = connection.prepareStatement("SELECT player_uniqueId, player_name, coins FROM coinsapi_players WHERE player_uniqueId = ?");
+            ps.setString(1, uuid.toString());
+            final ResultSet rs = ps.executeQuery();
+            if (!rs.next()) return Optional.empty();
+            return Optional.of(PlayerEntry.of(UUID.fromString(rs.getString("player_uniqueId")), rs.getString("player_name"), rs.getDouble("coins")));
+        }
     }
 
     public List<PlayerEntry> getAllPlayers() throws SQLException {
-        final var connection = getConnection();
-        final PreparedStatement ps = connection.prepareStatement("SELECT player_uniqueId, player_name, coins FROM coinsapi_players");
-        final ResultSet rs = ps.executeQuery();
+        try(final var connection = getConnection()) {
+            final PreparedStatement ps = connection.prepareStatement("SELECT player_uniqueId, player_name, coins FROM coinsapi_players");
+            final ResultSet rs = ps.executeQuery();
 
-        final List<PlayerEntry> players = new ArrayList<>();
-        while (rs.next()) {
-            players.add(PlayerEntry.of(UUID.fromString(rs.getString("player_uniqueId")), rs.getString("player_name"), rs.getDouble("coins")));
+            final List<PlayerEntry> players = new ArrayList<>();
+            while (rs.next()) {
+                players.add(PlayerEntry.of(UUID.fromString(rs.getString("player_uniqueId")), rs.getString("player_name"), rs.getDouble("coins")));
+            }
+            return players;
         }
-        return players;
     }
 
     public boolean isConnected() {

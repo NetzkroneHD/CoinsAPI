@@ -137,10 +137,17 @@ public final class CoinsPlugin extends JavaPlugin {
 
         final var economyName = getConfig().getString("economy-name", "NetzCoinsEconomy");
         final var currencySymbol = getConfig().getString("currency.symbol", "C");
-        final var currencyNameSingular = getConfig().getString("currency.name.singular", "Coin");
         final var currencyNamePlural = getConfig().getString("currency.name.plural", "Coins");
+        final var currencyNameSingular = getConfig().getString("currency.name.singular", "Coin");
 
-        this.coinsConfig = new CoinsConfig(decimalFormat, economyName, currencySymbol, currencyNameSingular, currencyNamePlural, sendUpdateMessages);
+        this.coinsConfig = CoinsConfig.builder()
+                .decimalFormat(decimalFormat)
+                .economyName(economyName)
+                .currencySymbol(currencySymbol)
+                .currencyNamePlural(currencyNamePlural)
+                .currencyNameSingular(currencyNameSingular)
+                .sendUpdateMessages(sendUpdateMessages)
+                .build();
         getLogger().info("Coins configuration loaded successfully.");
 
         if(sendUpdateMessages) {

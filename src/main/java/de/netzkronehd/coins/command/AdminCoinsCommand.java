@@ -41,7 +41,7 @@ public class AdminCoinsCommand extends Command {
     private final CoinsPlugin plugin;
 
     public AdminCoinsCommand(CoinsPlugin plugin) {
-        super("admincoins", "", "", List.of("admincoin", "netzadmincoins", "nac", "economyadmin", "setcoins", "addcoins", "removecoins"));
+        super("admincoins", "", "", List.of("admincoin", "netzadmincoins", "nac", "economyadmin", "setcoins", "addcoins", "removecoins", "adminnc"));
         this.plugin = plugin;
     }
 

@@ -6,7 +6,7 @@
 
     <groupId>de.netzkronehd.coins</groupId>
     <artifactId>coinsapi</artifactId>
-    <version>1.0.8</version>
+    <version>1.0.9</version>
     <packaging>jar</packaging>
 
     <properties>
@@ -17,7 +17,7 @@
         <sqlite.version>3.47.1.0</sqlite.version>
         <postgres.version>42.7.7</postgres.version>
         <luckperms.version>5.5</luckperms.version>
-        <redis.version>7.0.0</redis.version>
+        <redis.version>7.2.1</redis.version>
         <hikari.version>7.0.2</hikari.version>
     </properties>
 

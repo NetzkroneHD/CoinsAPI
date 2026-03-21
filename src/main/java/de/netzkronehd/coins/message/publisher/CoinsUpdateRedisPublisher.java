@@ -4,25 +4,25 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import de.netzkronehd.coins.message.model.CoinsUpdateMessage;
 import de.netzkronehd.coins.message.redis.RedisConnection;
-import de.netzkronehd.coins.message.redis.RedisCredentials;
 
 import java.time.OffsetDateTime;
 
-public class CoinsUpdateRedisPublisher extends RedisConnection implements CoinsUpdateMessagePublisher{
+public class CoinsUpdateRedisPublisher implements CoinsUpdateMessagePublisher {
 
     public static final Gson GSON = new GsonBuilder()
             .registerTypeAdapter(OffsetDateTime.class, new OffsetDateTimeAdapter())
             .create();
 
+    private final RedisConnection redisConnection;
     private final String channel;
 
-    public CoinsUpdateRedisPublisher(RedisCredentials credentials, String channel) {
-        super(credentials);
+    public CoinsUpdateRedisPublisher(RedisConnection redisConnection, String channel) {
+        this.redisConnection = redisConnection;
         this.channel = channel;
     }
 
     @Override
     public void publishMessage(CoinsUpdateMessage updateMessage) {
-        this.jedis.publish(channel, GSON.toJson(updateMessage));
+        redisConnection.getRedisClient().publish(channel, GSON.toJson(updateMessage));
     }
 }

@@ -22,7 +22,7 @@ import de.netzkronehd.coins.message.listener.CoinsUpdateListener;
 import de.netzkronehd.coins.message.listener.CoinsUpdatePluginMessageListener;
 import de.netzkronehd.coins.message.publisher.CoinsUpdateMessagePublisher;
 import de.netzkronehd.coins.message.publisher.CoinsUpdatePluginMessagePublisher;
-import de.netzkronehd.coins.message.redis.RedisClient;
+import de.netzkronehd.coins.message.redis.CoinsRedisClient;
 import de.netzkronehd.coins.message.redis.RedisCredentials;
 import de.netzkronehd.coins.source.PlayerCoinsSource;
 import lombok.Getter;
@@ -55,7 +55,7 @@ public final class CoinsPlugin extends JavaPlugin {
     private DatabaseService databaseService;
     private CoinsEconomy coinsEconomy;
 
-    private RedisClient redisClient;
+    private CoinsRedisClient redisClient;
     private CoinsUpdateListener coinsUpdateListener;
     private CoinsUpdateMessagePublisher coinsUpdateMessagePublisher;
     private TranslationService translationService;
@@ -161,6 +161,7 @@ public final class CoinsPlugin extends JavaPlugin {
                     getConfig().getInt("redis.database", 0)
             );
             final var redisChannel = getConfig().getString("redis.channel", "netzcoinsapi");
+            final var redisKeyPrefix = getConfig().getString("redis.key-prefix", "netzcoinsapi");
 
             this.coinsUpdateListener = new CoinsUpdateListener(this);
             switch (mode) {
@@ -170,7 +171,7 @@ public final class CoinsPlugin extends JavaPlugin {
                     getLogger().info("Using Plugin Message Channel for coins update messages.");
                 }
                 case REDIS -> {
-                    this.redisClient = new RedisClient(this, redisCredentials, redisChannel, coinsUpdateListener);
+                    this.redisClient = new CoinsRedisClient(this, redisCredentials, redisChannel, redisKeyPrefix, coinsUpdateListener);
                     this.coinsUpdateMessagePublisher = redisClient.getPublisher();
                     this.redisClient.runAfterReady(() -> getLogger().info("Connected to Redis server at " + redisCredentials.host() + ":" + redisCredentials.port() + " and listening on channel '" + redisChannel + "'."));
                     getLogger().info("Connecting to Redis server at " + redisCredentials.host() + ":" + redisCredentials.port() + "@"+redisCredentials.user());

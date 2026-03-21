@@ -22,3 +22,4 @@ redis:
   client-name: "netzcoinsapi"
   database: 0
   channel: "netzcoinsapi"
+  key-prefix: "netzcoinsapi"

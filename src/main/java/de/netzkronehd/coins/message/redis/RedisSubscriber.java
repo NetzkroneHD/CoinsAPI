@@ -2,36 +2,26 @@ package de.netzkronehd.coins.message.redis;
 
 import de.netzkronehd.coins.message.listener.CoinsUpdateListener;
 import de.netzkronehd.coins.message.listener.RedisUpdateListener;
+import lombok.Getter;
 
-import java.util.concurrent.atomic.AtomicBoolean;
-
-public class RedisSubscriber extends RedisConnection {
+public class RedisSubscriber {
 
     private final String channel;
     private final CoinsUpdateListener listener;
+    private final RedisConnection redisConnection;
 
-    public RedisSubscriber(RedisCredentials credentials, String channel, CoinsUpdateListener listener) {
-        super(credentials);
+    @Getter
+    private boolean subscribed = false;
+
+    public RedisSubscriber(RedisConnection redisConnection, String channel, CoinsUpdateListener listener) {
+        this.redisConnection = redisConnection;
         this.channel = channel;
         this.listener = listener;
     }
 
-    @Override
-    public void connect() {
-        super.connect();
-        awaitReady();
-        subscribe();
-    }
-
-    public void awaitReady() {
-        final AtomicBoolean ready = new AtomicBoolean(isReady());
-        do {
-            ready.set(isReady());
-        } while (!ready.get());
-    }
-
     public void subscribe() {
-        this.jedis.subscribe(new RedisUpdateListener(channel, listener), channel);
+        this.redisConnection.getRedisClient().subscribe(new RedisUpdateListener(channel, listener), channel);
+        subscribed = true;
     }
 
 }

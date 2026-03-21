@@ -1,39 +1,44 @@
 package de.netzkronehd.coins.message.redis;
 
+import lombok.Getter;
+import lombok.Setter;
 import redis.clients.jedis.DefaultJedisClientConfig;
-import redis.clients.jedis.HostAndPort;
-import redis.clients.jedis.Jedis;
+import redis.clients.jedis.RedisClient;
 
 import java.io.Closeable;
 
 public class RedisConnection implements Closeable {
 
     private final RedisCredentials credentials;
-
-    protected Jedis jedis;
+    @Getter
+    @Setter
+    private RedisClient redisClient;
 
     public RedisConnection(RedisCredentials credentials) {
         this.credentials = credentials;
     }
 
     public void connect() {
-        final DefaultJedisClientConfig config = DefaultJedisClientConfig.builder()
+        if (redisClient != null) {
+            close();
+        }
+        final var config = DefaultJedisClientConfig.builder()
                 .user(credentials.user())
                 .password(credentials.password())
                 .clientName(credentials.clientName())
                 .database(credentials.database())
                 .build();
 
-        this.jedis = new Jedis(new HostAndPort(credentials.host(), credentials.port()), config);
+        this.redisClient = RedisClient.builder().hostAndPort(credentials.host(), credentials.port()).clientConfig(config).build();
     }
 
     public boolean isReady() {
-        return jedis != null && jedis.isConnected();
+        return redisClient != null && redisClient.ping() != null;
     }
 
     @Override
     public void close() {
-        this.jedis.close();
+        this.redisClient.close();
     }
 
 }

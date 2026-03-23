@@ -12,8 +12,8 @@ public enum Dependency {
     MYSQL(
             "com{}mysql",
             "mysql-connector-j",
-            "9.4.0",
-            "Se2TyLK+qcsJKbhaiiiDexkdD46saRn9zvFuNuLNU7M=",
+            "9.6.0",
+            "Zt8dRTeJ3Iy3WafcF/WGRok78oSD8mIyhlDxcEcqbq0=",
             "com.mysql.cj.jdbc.Driver"),
     POSTGRESQL(
             "org{}postgresql",
@@ -26,8 +26,8 @@ public enum Dependency {
     SQLITE(
             "org{}xerial",
             "sqlite-jdbc",
-            "3.50.3.0",
-            "o/U6KqFa6UJannk7vpyOUoj+vrS2XvXBpOgNTCBFzwg=",
+            "3.51.3.0",
+            "NoSsXpvYk8vmjrCsFwg0P2a+gpsdK1qzF+eD0FrNWu8=",
             "org.sqlite.JDBC");
 
     private static final String MAVEN_FORMAT = "%s/%s/%s/%s-%s.jar";

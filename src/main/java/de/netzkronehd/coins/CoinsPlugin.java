@@ -175,8 +175,10 @@ public final class CoinsPlugin extends JavaPlugin {
                     this.coinsUpdateMessagePublisher = redisClient.getPublisher();
                     this.redisClient.runAfterReady(() -> getLogger().info("Connected to Redis server at " + redisCredentials.host() + ":" + redisCredentials.port() + " and listening on channel '" + redisChannel + "'."));
                     getLogger().info("Connecting to Redis server at " + redisCredentials.host() + ":" + redisCredentials.port() + "@"+redisCredentials.user());
-                    this.redisClient.connect();
-                    getLogger().info("Using Redis for coins update messages.");
+                    getServer().getScheduler().runTaskAsynchronously(this, () -> {
+                        this.redisClient.connect();
+                        getLogger().info("Using Redis for coins update messages.");
+                    });
                 }
             }
         }

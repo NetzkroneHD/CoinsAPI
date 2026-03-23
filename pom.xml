@@ -6,7 +6,7 @@
 
     <groupId>de.netzkronehd.coins</groupId>
     <artifactId>coinsapi</artifactId>
-    <version>1.0.9</version>
+    <version>1.0.11</version>
     <packaging>jar</packaging>
 
     <properties>
@@ -109,6 +109,12 @@
             <artifactId>VaultAPI</artifactId>
             <version>1.7</version>
             <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>junit</groupId>
+                    <artifactId>junit</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
@@ -118,10 +124,10 @@
             <scope>provided</scope>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-api -->
+        <!-- https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-api</artifactId>
+            <artifactId>junit-jupiter</artifactId>
             <version>5.11.4</version>
             <scope>test</scope>
         </dependency>
@@ -177,6 +183,10 @@
                                 <relocation>
                                     <pattern>redis.clients</pattern>
                                     <shadedPattern>de.netzkronehd.coins.lib.redis.clients</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>org.apache.commons.pool2</pattern>
+                                    <shadedPattern>de.netzkronehd.coins.lib.org.apache.commons.pool2</shadedPattern>
                                 </relocation>
                             </relocations>
                         </configuration>

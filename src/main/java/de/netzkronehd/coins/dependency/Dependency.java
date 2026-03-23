@@ -18,8 +18,8 @@ public enum Dependency {
     POSTGRESQL(
             "org{}postgresql",
             "postgresql",
-            "42.7.7",
-            "FXlj1grmbWB+CUZujAzfgIfpyyDQFZiZ/8qWvKJShGA=",
+            "42.7.10",
+            "yrHNZ8+iXCXeQ0jlMimAKCiKh3ugHHfRYZ/kVBYZM4c=",
             "org.postgresql.Driver"),
 
     // Local databases

@@ -2,6 +2,7 @@ package de.netzkronehd.coins.dependency.impl;
 
 import de.netzkronehd.coins.dependency.Dependency;
 import de.netzkronehd.coins.dependency.DependencyManager;
+import de.netzkronehd.coins.dependency.exception.DependencyChecksumMismatchException;
 import de.netzkronehd.coins.dependency.exception.DependencyDownloadException;
 import de.netzkronehd.coins.dependency.exception.DependencyNotDownloadedException;
 
@@ -18,7 +19,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -125,10 +125,7 @@ public class DependencyManagerImpl implements DependencyManager {
     private void checkChecksum(Dependency dependency, byte[] bytes) throws DependencyDownloadException {
         final byte[] hash = createDigest().digest(bytes);
         if (!dependency.checksumMatches(hash)) {
-            throw new DependencyDownloadException(
-                    "Checksum does not match for dependency " + dependency.name() +
-                            ". Expected: '" + Base64.getEncoder().encodeToString(dependency.getChecksum()) +
-                            "', got: '" + Base64.getEncoder().encodeToString(hash) + "'");
+            throw new DependencyChecksumMismatchException(dependency, hash);
         }
     }
 

@@ -3,11 +3,9 @@ package de.netzkronehd.coins.dependency.impl;
 
 import de.netzkronehd.coins.dependency.Dependency;
 import de.netzkronehd.coins.dependency.exception.DependencyDownloadException;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
-import java.io.IOException;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
@@ -21,26 +19,12 @@ import static org.mockito.Mockito.*;
 
 class DependencyManagerImplTest {
 
-    private static final Path DOWNLOAD_TEST_PATH = Path.of("src/test/resources/dependency-manager-download-test");
-
-    @BeforeAll
-    static void setUp() throws IOException {
-        Files.createDirectories(DOWNLOAD_TEST_PATH);
-    }
-
-    @AfterAll
-    static void tearDown() throws IOException {
-        try (var directoryStream = Files.newDirectoryStream(DOWNLOAD_TEST_PATH)) {
-            for (var path : directoryStream) {
-                Files.delete(path);
-            }
-        }
-        Files.deleteIfExists(DOWNLOAD_TEST_PATH);
-    }
+    @TempDir
+    private Path downloadTestPath;
 
     @Test
     void when_downloadDependency_with_valid_checksum_should_saveFile() throws Exception {
-        final var dependencyManager = new DependencyManagerImpl(DOWNLOAD_TEST_PATH);
+        final var dependencyManager = new DependencyManagerImpl(downloadTestPath);
         final var downloadedPath = dependencyManager.downloadDependency(Dependency.POSTGRESQL);
 
         assertTrue(Files.exists(downloadedPath));

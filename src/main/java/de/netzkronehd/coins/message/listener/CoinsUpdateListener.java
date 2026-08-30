@@ -9,6 +9,8 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
+import static de.netzkronehd.coins.api.CoinsApiInstance.INSTANCE_ID;
+
 public class CoinsUpdateListener {
 
     private final CoinsPlugin plugin;
@@ -20,7 +22,7 @@ public class CoinsUpdateListener {
     }
 
     public void onCoinsUpdateMessage(CoinsUpdateMessage update) {
-        if(CoinsPlugin.INSTANCE_ID.equals(update.metaData().senderInstanceId())) {
+        if(INSTANCE_ID.equals(update.metaData().senderInstanceId())) {
             plugin.getLogger().fine("Ignoring coins update message from same instance with ID: " + update.metaData().senderInstanceId());
             return;
         }

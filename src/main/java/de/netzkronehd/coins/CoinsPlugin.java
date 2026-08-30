@@ -41,8 +41,6 @@ import static de.netzkronehd.coins.message.CommunicationMode.PLUGIN_MESSAGE;
 @Getter
 public final class CoinsPlugin extends JavaPlugin {
 
-    public static final UUID INSTANCE_ID = UUID.randomUUID();
-
     @Getter
     public static CoinsPlugin instance;
 
@@ -215,4 +213,5 @@ public final class CoinsPlugin extends JavaPlugin {
     public void runAsync(Runnable run) {
         getServer().getScheduler().runTaskAsynchronously(this, run);
     }
+
 }

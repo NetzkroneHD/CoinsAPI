@@ -32,7 +32,7 @@ public class CoinsPlayerJoinListener implements Listener {
             try {
                 plugin.getDatabaseService().getDatabase().insertOrUpdatePlayer(player.getUniqueId(), player.getName());
                 plugin.getDatabaseService().getDatabase().getPlayerEntry(player.getUniqueId())
-                        .ifPresent(entry -> player.getCoinsHolder().set(entry.coins()));
+                        .ifPresent(entry -> player.setCoins(entry.coins()));
                 plugin.getServer().getPluginManager().callEvent(new CoinsInitializedEvent(player));
             } catch (SQLException e) {
                 throw new RuntimeException(e);

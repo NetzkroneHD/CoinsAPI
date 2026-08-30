@@ -1,5 +1,7 @@
 # NetzCoinsApi
 
+[![](https://jitpack.io/v/NetzkroneHD/CoinsApi.svg)](https://jitpack.io/#NetzkroneHD/CoinsApi)  
+
 This is a Minecraft plugin that allows you to create and manage coins in your Minecraft server. 
 It provides a simple API for developers to interact with coins, including creating, deleting, and modifying coins.
 
@@ -19,6 +21,8 @@ To use the CoinsAPI in your plugin, you need to add it as a dependency in your `
 ```yaml
 depend: [NetzCoinsApi]
 ```
+
+You can add the dependency via [jitpack](https://jitpack.io/#NetzkroneHD/CoinsApi).
 
 ### Api structure
 
